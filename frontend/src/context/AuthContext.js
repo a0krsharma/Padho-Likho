@@ -14,28 +14,27 @@ export const AuthProvider = ({ children }) => {
     // Check if user is already logged in
     const token = localStorage.getItem('token');
     if (token) {
-      fetchCurrentUser(token);
+      const fetchCurrentUser = async () => {
+        try {
+          // Set default auth header for all requests
+          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          
+          const response = await axios.get('/api/auth/me');
+          setCurrentUser(response.data.user);
+          setError(null);
+        } catch (err) {
+          console.error('Error fetching current user:', err);
+          logout(); // Clear invalid token
+          setError('Session expired. Please login again.');
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchCurrentUser();
     } else {
       setLoading(false);
     }
-  }, [fetchCurrentUser]); // Add fetchCurrentUser to dependencies
-
-  const fetchCurrentUser = async (token) => {
-    try {
-      // Set default auth header for all requests
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      
-      const response = await axios.get('/api/auth/me');
-      setCurrentUser(response.data.user);
-      setError(null);
-    } catch (err) {
-      console.error('Error fetching current user:', err);
-      logout(); // Clear invalid token
-      setError('Session expired. Please login again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, []); // Removed fetchCurrentUser from dependencies
 
   const login = async (email, password) => {
     try {
