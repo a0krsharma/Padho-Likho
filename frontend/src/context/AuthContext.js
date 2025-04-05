@@ -14,35 +14,45 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Define logout function early to avoid reference errors
-  const logout = () => {
+  // Define all functions before they're used
+  function clearAuth() {
     localStorage.removeItem('token');
-    delete axios.defaults.headers.common['Authorization'];
+    if (axios.defaults.headers.common['Authorization']) {
+      delete axios.defaults.headers.common['Authorization'];
+    }
     setCurrentUser(null);
     setError(null);
+  }
+
+  // Define logout function
+  const logout = () => {
+    clearAuth();
   };
 
+  // Define async functions
+  const checkCurrentUser = async (token) => {
+    try {
+      // Set default auth header for all requests
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      
+      const response = await axios.get('/api/auth/me');
+      setCurrentUser(response.data.user);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching current user:', err);
+      clearAuth(); // Clear invalid token
+      setError('Session expired. Please login again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Use effect for initialization
   useEffect(() => {
     // Check if user is already logged in
     const token = localStorage.getItem('token');
     if (token) {
-      const fetchCurrentUser = async () => {
-        try {
-          // Set default auth header for all requests
-          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-          
-          const response = await axios.get('/api/auth/me');
-          setCurrentUser(response.data.user);
-          setError(null);
-        } catch (err) {
-          console.error('Error fetching current user:', err);
-          logout(); // Clear invalid token
-          setError('Session expired. Please login again.');
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchCurrentUser();
+      checkCurrentUser(token);
     } else {
       setLoading(false);
     }
