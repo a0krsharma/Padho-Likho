@@ -11,25 +11,55 @@ exports.register = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, email, password, role } = req.body;
+    const { 
+      email, 
+      password, 
+      firstName, 
+      lastName, 
+      role, 
+      phone, 
+      address, 
+      city, 
+      state, 
+      zipCode, 
+      country,
+      class: classGrade,
+      subjects,
+      qualifications,
+      experience
+    } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: 'User already exists with this email' });
+      return res.status(400).json({ 
+        success: false,
+        message: 'User already exists with this email' 
+      });
     }
 
     // Create user based on role
     const userData = {
-      name,
+      name: `${firstName} ${lastName}`,
       email,
       password,
-      role: role || 'student'
+      role: role || 'student',
+      phone,
+      address: {
+        street: address,
+        city,
+        state,
+        pincode: zipCode,
+        country
+      }
     };
 
     // Add role-specific details
     if (role === 'teacher') {
       userData.teacherDetails = {
+        qualifications: qualifications ? [qualifications] : [],
+        experience: experience ? Number(experience) : 0,
+        subjects: subjects || [],
         hourlyRate: {
           individual: 2999,
           twoStudents: 1499,
@@ -39,7 +69,8 @@ exports.register = async (req, res) => {
       };
     } else if (role === 'student') {
       userData.studentDetails = {
-        class: req.body.class || 1
+        class: classGrade ? Number(classGrade) : 1,
+        subjects: subjects || []
       };
     }
 
@@ -50,11 +81,12 @@ exports.register = async (req, res) => {
     // Generate JWT token
     const token = jwt.sign(
       { userId: user._id, role: user.role },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET || 'padho_likho_jwt_secret_key',
       { expiresIn: '7d' }
     );
 
     res.status(201).json({
+      success: true,
       message: 'User registered successfully',
       token,
       user: user.getPublicProfile()
@@ -71,7 +103,10 @@ exports.login = async (req, res) => {
     // Check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({ 
+        success: false,
+        errors: errors.array() 
+      });
     }
 
     const { email, password } = req.body;
@@ -79,23 +114,30 @@ exports.login = async (req, res) => {
     // Find user by email
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ 
+        success: false,
+        message: 'Invalid email or password' 
+      });
     }
 
     // Check password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ 
+        success: false,
+        message: 'Invalid email or password' 
+      });
     }
 
     // Generate JWT token
     const token = jwt.sign(
       { userId: user._id, role: user.role },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET || 'padho_likho_jwt_secret_key',
       { expiresIn: '7d' }
     );
 
     res.json({
+      success: true,
       message: 'Login successful',
       token,
       user: user.getPublicProfile()
@@ -111,10 +153,16 @@ exports.getCurrentUser = async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ 
+        success: false,
+        message: 'User not found' 
+      });
     }
     
-    res.json({ user: user.getPublicProfile() });
+    res.json({ 
+      success: true,
+      user: user.getPublicProfile() 
+    });
   } catch (error) {
     console.error('Get current user error:', error);
     res.status(500).json({ message: 'Server error while fetching user profile' });
@@ -126,21 +174,29 @@ exports.verifyEmail = async (req, res) => {
   try {
     const { token } = req.params;
     
-    // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
-    // Update user verification status
-    const user = await User.findByIdAndUpdate(
-      decoded.userId,
-      { isVerified: true },
-      { new: true }
-    );
+    // Find user with this verification token and token not expired
+    const user = await User.findOne({
+      emailVerificationToken: token,
+      emailVerificationExpires: { $gt: Date.now() }
+    });
     
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(400).json({ 
+        success: false,
+        message: 'Email verification token is invalid or has expired' 
+      });
     }
     
-    res.json({ message: 'Email verified successfully' });
+    // Update user verification status
+    user.isVerified = true;
+    user.emailVerificationToken = undefined;
+    user.emailVerificationExpires = undefined;
+    await user.save();
+    
+    res.json({ 
+      success: true,
+      message: 'Email verified successfully' 
+    });
   } catch (error) {
     console.error('Email verification error:', error);
     res.status(500).json({ message: 'Invalid or expired verification token' });
@@ -155,19 +211,20 @@ exports.forgotPassword = async (req, res) => {
     // Find user by email
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ message: 'User not found with this email' });
+      return res.status(404).json({ 
+        success: false,
+        message: 'User not found with this email' 
+      });
     }
     
-    // Generate password reset token
-    const resetToken = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' }
-    );
+    // Generate password reset token using the method from user model
+    const resetToken = user.generatePasswordResetToken();
+    await user.save();
     
     // In a real app, send email with reset link
     // For now, just return the token
     res.json({
+      success: true,
       message: 'Password reset link sent to your email',
       resetToken // This would normally be sent via email
     });
@@ -182,19 +239,29 @@ exports.resetPassword = async (req, res) => {
   try {
     const { token, newPassword } = req.body;
     
-    // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // Find user with this reset token and token not expired
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() }
+    });
     
-    // Find user and update password
-    const user = await User.findById(decoded.userId);
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(400).json({ 
+        success: false,
+        message: 'Password reset token is invalid or has expired' 
+      });
     }
     
+    // Set the new password
     user.password = newPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
     await user.save();
     
-    res.json({ message: 'Password reset successful' });
+    res.json({ 
+      success: true,
+      message: 'Password reset successful' 
+    });
   } catch (error) {
     console.error('Reset password error:', error);
     res.status(500).json({ message: 'Invalid or expired reset token' });

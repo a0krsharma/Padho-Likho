@@ -29,7 +29,9 @@ import CreateAssessment from './pages/teacher/CreateAssessment';
 // Student pages
 import StudentDashboard from './pages/student/Dashboard';
 import StudentAssessments from './pages/student/Assessments';
-import StudentProfile from './pages/student/Profile';
+
+// Profile page
+import Profile from './pages/profile/Profile';
 
 // Context
 import { AuthProvider } from './context/AuthContext';
@@ -163,7 +165,7 @@ function App() {
             path="/student/profile" 
             element={
               <ProtectedRoute allowedRoles={['student']}>
-                <StudentProfile />
+                <Profile />
               </ProtectedRoute>
             } 
           />
@@ -174,6 +176,14 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['parent']}>
                 <ParentDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/parent/profile" 
+            element={
+              <ProtectedRoute allowedRoles={['parent']}>
+                <Profile />
               </ProtectedRoute>
             } 
           />
@@ -224,6 +234,14 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['teacher']}>
                 <CreateAssessment />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/teacher/profile" 
+            element={
+              <ProtectedRoute allowedRoles={['teacher']}>
+                <Profile />
               </ProtectedRoute>
             } 
           />

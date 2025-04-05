@@ -34,7 +34,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Database connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://db_a0krsharma:db_70@Crore@cluster0.48gvmzc.mongodb.net/padho-likho?retryWrites=true&w=majority&appName=Cluster0';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/padho-likho';
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -51,14 +51,11 @@ app.use('/api/classes', classRoutes);
 app.use('/api/assessments', assessmentRoutes);
 app.use('/api/payments', paymentRoutes);
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({
-    success: false,
-    message: err.message || 'Internal server error'
-  });
-});
+// Import error handling middleware
+const errorHandler = require('./middleware/error.middleware');
+
+// Apply error handling middleware
+app.use(errorHandler);
 
 // Socket.io connection for real-time features
 io.on('connection', (socket) => {

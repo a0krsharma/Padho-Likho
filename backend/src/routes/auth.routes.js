@@ -5,81 +5,17 @@ const auth = require('../middleware/auth.middleware');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
-const Teacher = require('../models/teacher.model');
 
 const router = express.Router();
 
 // Register new user
-router.post('/register', async (req, res) => {
-  try {
-    const { email, password, firstName, lastName, role, phone, address, city, state, zipCode, country } = req.body;
-
-    // Validate required fields
-    if (!email || !password || !firstName || !lastName || !role) {
-      return res.status(400).json({
-        success: false,
-        message: 'All fields are required'
-      });
-    }
-
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({
-        success: false,
-        message: 'User already exists'
-      });
-    }
-
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // Create new user
-    const user = new User({
-      email,
-      password: hashedPassword,
-      firstName,
-      lastName,
-      role,
-      phone,
-      address,
-      city,
-      state,
-      zipCode,
-      country
-    });
-
-    await user.save();
-
-    // Create JWT token
-    const token = jwt.sign(
-      { userId: user._id, role: user.role },
-      process.env.JWT_SECRET || 'padho_likho_jwt_secret_key',
-      { expiresIn: '24h' }
-    );
-
-    // Return success response
-    res.status(201).json({
-      success: true,
-      message: 'Registration successful',
-      token,
-      user: {
-        _id: user._id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        role: user.role
-      }
-    });
-  } catch (error) {
-    console.error('Registration error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Registration failed. Please try again.'
-    });
-  }
-});
+router.post('/register', [
+  body('email').isEmail().withMessage('Please provide a valid email'),
+  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
+  body('firstName').notEmpty().withMessage('First name is required'),
+  body('lastName').notEmpty().withMessage('Last name is required'),
+  body('role').isIn(['student', 'teacher', 'parent', 'admin']).withMessage('Invalid role')
+], authController.register);
 
 // Login user
 router.post(

@@ -17,7 +17,11 @@ import {
   Stepper,
   Step,
   StepLabel,
-  Grid
+  Grid,
+  Chip,
+  OutlinedInput,
+  Checkbox,
+  FormControlLabel
 } from '@mui/material';
 import { 
   Visibility, 
@@ -30,6 +34,7 @@ import {
 } from '@mui/icons-material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import PasswordStrengthMeter from '../../components/common/PasswordStrengthMeter';
 
 const Register = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -142,7 +147,8 @@ const Register = () => {
     try {
       // Prepare data based on role
       const userData = {
-        name: formData.name,
+        firstName: formData.name.split(' ')[0] || formData.name,
+        lastName: formData.name.split(' ').slice(1).join(' ') || '',
         email: formData.email,
         password: formData.password,
         role: formData.role,
@@ -211,25 +217,18 @@ const Register = () => {
               margin="normal"
               required
               fullWidth
-              name="password"
-              label="Password"
               type={showPassword ? 'text' : 'password'}
-              id="password"
-              autoComplete="new-password"
+              label="Password"
+              variant="outlined"
+              name="password"
               value={formData.password}
               onChange={handleChange}
-              error={Boolean(errors.password)}
+              error={!!errors.password}
               helperText={errors.password}
               InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <LockIcon color="primary" />
-                  </InputAdornment>
-                ),
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
-                      aria-label="toggle password visibility"
                       onClick={toggleShowPassword}
                       edge="end"
                     >
@@ -239,6 +238,7 @@ const Register = () => {
                 ),
               }}
             />
+            {formData.password && <PasswordStrengthMeter password={formData.password} />}
             <TextField
               margin="normal"
               required

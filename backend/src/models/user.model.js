@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
+/**
+ * User Schema
+ * Represents all users in the system (students, teachers, parents, admins)
+ */
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -9,15 +14,16 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: true,
+    required: [true, 'Email is required'],
     unique: true,
     trim: true,
-    lowercase: true
+    lowercase: true,
+    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please provide a valid email address']
   },
   password: {
     type: String,
-    required: true,
-    minlength: 6
+    required: [true, 'Password is required'],
+    minlength: [6, 'Password must be at least 6 characters long']
   },
   role: {
     type: String,
@@ -43,6 +49,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  emailVerificationToken: String,
+  emailVerificationExpires: Date,
+  resetPasswordToken: String,
+  resetPasswordExpires: Date,
   createdAt: {
     type: Date,
     default: Date.now
@@ -142,7 +152,39 @@ userSchema.methods.comparePassword = async function(password) {
 userSchema.methods.getPublicProfile = function() {
   const userObject = this.toObject();
   delete userObject.password;
+  delete userObject.emailVerificationToken;
+  delete userObject.emailVerificationExpires;
+  delete userObject.resetPasswordToken;
+  delete userObject.resetPasswordExpires;
   return userObject;
+};
+
+// Method to generate email verification token
+userSchema.methods.generateVerificationToken = function() {
+  const verificationToken = jwt.sign(
+    { userId: this._id },
+    process.env.JWT_SECRET || 'padho_likho_jwt_secret_key',
+    { expiresIn: '24h' }
+  );
+  
+  this.emailVerificationToken = verificationToken;
+  this.emailVerificationExpires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+  
+  return verificationToken;
+};
+
+// Method to generate password reset token
+userSchema.methods.generatePasswordResetToken = function() {
+  const resetToken = jwt.sign(
+    { userId: this._id },
+    process.env.JWT_SECRET || 'padho_likho_jwt_secret_key',
+    { expiresIn: '1h' }
+  );
+  
+  this.resetPasswordToken = resetToken;
+  this.resetPasswordExpires = Date.now() + 60 * 60 * 1000; // 1 hour
+  
+  return resetToken;
 };
 
 const User = mongoose.model('User', userSchema);
