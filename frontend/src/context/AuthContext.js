@@ -5,17 +5,21 @@ import axios from 'axios';
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 axios.defaults.baseURL = API_BASE_URL;
 
-const AuthContext = createContext();
+// Create context
+const AuthContext = createContext(null);
 
+// Custom hook to use the auth context
 export const useAuth = () => useContext(AuthContext);
 
+// Auth provider component
 export const AuthProvider = ({ children }) => {
+  // State
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Define all functions before they're used
-  function clearAuth() {
+  // Helper function to clear authentication
+  function clearAuthState() {
     localStorage.removeItem('token');
     if (axios.defaults.headers.common['Authorization']) {
       delete axios.defaults.headers.common['Authorization'];
@@ -24,40 +28,38 @@ export const AuthProvider = ({ children }) => {
     setError(null);
   }
 
-  // Define logout function
+  // Logout function
   const logout = () => {
-    clearAuth();
+    clearAuthState();
   };
 
-  // Define async functions
-  const checkCurrentUser = async (token) => {
+  // Function to fetch current user
+  const fetchCurrentUser = async (token) => {
     try {
-      // Set default auth header for all requests
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      
       const response = await axios.get('/api/auth/me');
       setCurrentUser(response.data.user);
       setError(null);
     } catch (err) {
       console.error('Error fetching current user:', err);
-      clearAuth(); // Clear invalid token
+      clearAuthState();
       setError('Session expired. Please login again.');
     } finally {
       setLoading(false);
     }
   };
 
-  // Use effect for initialization
+  // Check if user is already logged in on component mount
   useEffect(() => {
-    // Check if user is already logged in
     const token = localStorage.getItem('token');
     if (token) {
-      checkCurrentUser(token);
+      fetchCurrentUser(token);
     } else {
       setLoading(false);
     }
   }, []);
 
+  // Login function
   const login = async (email, password) => {
     try {
       setLoading(true);
@@ -65,10 +67,7 @@ export const AuthProvider = ({ children }) => {
       
       const { token, user } = response.data;
       
-      // Save token to localStorage
       localStorage.setItem('token', token);
-      
-      // Set default auth header for all requests
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
       setCurrentUser(user);
@@ -83,6 +82,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Register function
   const register = async (userData) => {
     try {
       setLoading(true);
@@ -95,7 +95,6 @@ export const AuthProvider = ({ children }) => {
         password: userData.password,
         role: userData.role,
         phone: userData.phone,
-        // Send address fields directly as expected by the backend
         address: userData.address || '',
         city: userData.city || '',
         state: userData.state || '',
@@ -121,10 +120,7 @@ export const AuthProvider = ({ children }) => {
       
       const { token, user } = response.data;
       
-      // Save token to localStorage
       localStorage.setItem('token', token);
-      
-      // Set default auth header for all requests
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
       setCurrentUser(user);
@@ -140,8 +136,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Logout function is defined above to avoid reference errors
-
+  // Update profile function
   const updateProfile = async (userData) => {
     try {
       setLoading(true);
@@ -159,6 +154,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Forgot password function
   const forgotPassword = async (email) => {
     try {
       setLoading(true);
@@ -174,6 +170,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Reset password function
   const resetPassword = async (token, newPassword) => {
     try {
       setLoading(true);
@@ -189,6 +186,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Context value
   const value = {
     currentUser,
     loading,
