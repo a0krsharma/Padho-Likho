@@ -14,6 +14,14 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Define logout function early to avoid reference errors
+  const logout = () => {
+    localStorage.removeItem('token');
+    delete axios.defaults.headers.common['Authorization'];
+    setCurrentUser(null);
+    setError(null);
+  };
+
   useEffect(() => {
     // Check if user is already logged in
     const token = localStorage.getItem('token');
@@ -122,12 +130,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    delete axios.defaults.headers.common['Authorization'];
-    setCurrentUser(null);
-    setError(null);
-  };
+  // Logout function is defined above to avoid reference errors
 
   const updateProfile = async (userData) => {
     try {
