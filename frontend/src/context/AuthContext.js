@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 
 // Configure axios base URL based on environment
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://padho-likho-api.onrender.com';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://padho-likho-4ky2.onrender.com';
 axios.defaults.baseURL = API_BASE_URL;
 
 // Function to create full API URL
