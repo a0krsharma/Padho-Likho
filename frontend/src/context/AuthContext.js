@@ -2,8 +2,16 @@ import React from 'react';
 import axios from 'axios';
 
 // Configure axios base URL based on environment
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://padho-likho-backend.onrender.com';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://padho-likho-api.onrender.com';
 axios.defaults.baseURL = API_BASE_URL;
+
+// Function to create full API URL
+const createApiUrl = (endpoint) => {
+  // Remove any leading slashes from the endpoint
+  const cleanEndpoint = endpoint.replace(/^\//, '');
+  // Return the full URL
+  return `${API_BASE_URL}/${cleanEndpoint}`;
+};
 
 // Create context first
 const AuthContext = React.createContext();
@@ -39,7 +47,7 @@ export function AuthProvider({ children }) {
   async function checkUser(token) {
     try {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      const response = await axios.get('/api/auth/me');
+      const response = await axios.get(createApiUrl('/api/auth/me'));
       setCurrentUser(response.data.user);
       setError(null);
     } catch (err) {
@@ -65,7 +73,7 @@ export function AuthProvider({ children }) {
   async function login(email, password) {
     try {
       setLoading(true);
-      const response = await axios.post('/api/auth/login', { email, password });
+      const response = await axios.post(createApiUrl('/api/auth/login'), { email, password });
       const { token, user } = response.data;
       localStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -108,7 +116,7 @@ export function AuthProvider({ children }) {
         registrationData.experience = userData.experience;
       }
       
-      const response = await axios.post('/api/auth/register', registrationData);
+      const response = await axios.post(createApiUrl('/api/auth/register'), registrationData);
       const { token, user } = response.data;
       localStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -128,7 +136,7 @@ export function AuthProvider({ children }) {
   async function updateProfile(userData) {
     try {
       setLoading(true);
-      const response = await axios.put('/api/users/profile', userData);
+      const response = await axios.put(createApiUrl('/api/users/profile'), userData);
       setCurrentUser(response.data.user);
       setError(null);
       return response.data.user;
@@ -145,7 +153,7 @@ export function AuthProvider({ children }) {
   async function forgotPassword(email) {
     try {
       setLoading(true);
-      const response = await axios.post('/api/auth/forgot-password', { email });
+      const response = await axios.post(createApiUrl('/api/auth/forgot-password'), { email });
       setError(null);
       return response.data;
     } catch (err) {
@@ -161,7 +169,7 @@ export function AuthProvider({ children }) {
   async function resetPassword(token, newPassword) {
     try {
       setLoading(true);
-      const response = await axios.post('/api/auth/reset-password', { token, newPassword });
+      const response = await axios.post(createApiUrl('/api/auth/reset-password'), { token, newPassword });
       setError(null);
       return response.data;
     } catch (err) {
