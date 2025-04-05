@@ -1,6 +1,10 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 
+// Configure axios base URL based on environment
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+axios.defaults.baseURL = API_BASE_URL;
+
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
@@ -34,7 +38,7 @@ export const AuthProvider = ({ children }) => {
     } else {
       setLoading(false);
     }
-  }, []); // Removed fetchCurrentUser from dependencies
+  }, []);
 
   const login = async (email, password) => {
     try {
@@ -51,11 +55,11 @@ export const AuthProvider = ({ children }) => {
       
       setCurrentUser(user);
       setError(null);
-      return user;
+      return true;
     } catch (err) {
       console.error('Login error:', err);
       setError(err.response?.data?.message || 'Login failed. Please try again.');
-      throw err;
+      return false;
     } finally {
       setLoading(false);
     }
@@ -76,24 +80,21 @@ export const AuthProvider = ({ children }) => {
       
       setCurrentUser(user);
       setError(null);
-      return user;
+      return true;
     } catch (err) {
       console.error('Registration error:', err);
       setError(err.response?.data?.message || 'Registration failed. Please try again.');
-      throw err;
+      return false;
     } finally {
       setLoading(false);
     }
   };
 
   const logout = () => {
-    // Remove token from localStorage
     localStorage.removeItem('token');
-    
-    // Remove auth header
     delete axios.defaults.headers.common['Authorization'];
-    
     setCurrentUser(null);
+    setError(null);
   };
 
   const updateProfile = async (userData) => {

@@ -51,6 +51,15 @@ app.use('/api/classes', classRoutes);
 app.use('/api/assessments', assessmentRoutes);
 app.use('/api/payments', paymentRoutes);
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    success: false,
+    message: err.message || 'Internal server error'
+  });
+});
+
 // Socket.io connection for real-time features
 io.on('connection', (socket) => {
   console.log('New client connected');
