@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
     } else {
       setLoading(false);
     }
-  }, []);
+  }, [fetchCurrentUser]); // Add fetchCurrentUser to dependencies
 
   const fetchCurrentUser = async (token) => {
     try {

@@ -39,9 +39,7 @@ import {
   Verified as VerifiedIcon
 } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
-// Date picker libraries removed due to compatibility issues
 
-// Sample teacher data - in a real app, this would come from an API
 const teachersData = [
   {
     id: 1,
@@ -98,14 +96,11 @@ const BookTeacher = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   
-  // Find teacher by ID
   const teacher = teachersData.find(t => t.id === parseInt(id)) || null;
   
-  // Stepper state
   const [activeStep, setActiveStep] = useState(0);
   const steps = ['Select Subject', 'Choose Date & Time', 'Booking Details', 'Confirm Booking'];
   
-  // Booking form state
   const [bookingData, setBookingData] = useState({
     subject: '',
     class: '',
@@ -116,13 +111,11 @@ const BookTeacher = () => {
     notes: ''
   });
   
-  // UI state
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   
-  // Handle form changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setBookingData({
@@ -131,11 +124,7 @@ const BookTeacher = () => {
     });
   };
   
-  // Date and time change handlers now handled directly in the TextField onChange events
-  
-  // Handle next step
   const handleNext = () => {
-    // Validate current step
     if (activeStep === 0) {
       if (!bookingData.subject || !bookingData.class) {
         setError('Please select both subject and class');
@@ -157,23 +146,19 @@ const BookTeacher = () => {
     setError('');
   };
   
-  // Handle back step
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
     setError('');
   };
   
-  // Handle booking confirmation
   const handleConfirmBooking = () => {
     setLoading(true);
     
-    // Simulate API call
     setTimeout(() => {
       setLoading(false);
       setSuccess(true);
       setConfirmDialogOpen(false);
       
-      // In a real app, this would be an API call to create a booking
       console.log('Booking confirmed:', {
         teacherId: teacher.id,
         teacherName: teacher.name,
@@ -183,13 +168,11 @@ const BookTeacher = () => {
     }, 1500);
   };
   
-  // Calculate total amount
   const calculateTotalAmount = () => {
     const durationInHours = bookingData.duration / 60;
     return teacher.hourlyRate * durationInHours;
   };
   
-  // Format date for display
   const formatDate = (date) => {
     if (!date) return '';
     return new Date(date).toLocaleDateString('en-US', {
@@ -200,7 +183,6 @@ const BookTeacher = () => {
     });
   };
   
-  // Format time for display
   const formatTime = (time) => {
     if (!time) return '';
     return new Date(time).toLocaleTimeString('en-US', {
@@ -209,7 +191,6 @@ const BookTeacher = () => {
     });
   };
   
-  // If teacher not found
   if (!teacher) {
     return (
       <Container maxWidth="md" sx={{ py: 8, textAlign: 'center' }}>
@@ -230,7 +211,6 @@ const BookTeacher = () => {
     );
   }
   
-  // If booking successful
   if (success) {
     return (
       <Container maxWidth="md" sx={{ py: 8 }}>
@@ -268,7 +248,6 @@ const BookTeacher = () => {
     );
   }
   
-  // Render step content
   const getStepContent = (step) => {
     switch (step) {
       case 0:
@@ -556,7 +535,6 @@ const BookTeacher = () => {
   
   return (
     <Box>
-      {/* Header Section */}
       <Box 
         sx={{ 
           backgroundColor: 'primary.light',
@@ -586,7 +564,6 @@ const BookTeacher = () => {
       
       <Container maxWidth="lg">
         <Grid container spacing={4}>
-          {/* Teacher Info */}
           <Grid item xs={12} md={4}>
             <Card elevation={2} sx={{ borderRadius: 3, mb: 4 }}>
               <CardContent>
@@ -676,7 +653,6 @@ const BookTeacher = () => {
             </Card>
           </Grid>
           
-          {/* Booking Form */}
           <Grid item xs={12} md={8}>
             <Card elevation={2} sx={{ borderRadius: 3 }}>
               <CardContent>
@@ -735,7 +711,6 @@ const BookTeacher = () => {
         </Grid>
       </Container>
       
-      {/* Confirmation Dialog */}
       <Dialog
         open={confirmDialogOpen}
         onClose={() => setConfirmDialogOpen(false)}
@@ -769,7 +744,6 @@ const BookTeacher = () => {
         </DialogActions>
       </Dialog>
       
-      {/* Success Snackbar */}
       <Snackbar
         open={success}
         autoHideDuration={6000}
