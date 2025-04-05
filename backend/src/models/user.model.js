@@ -62,13 +62,16 @@ const userSchema = new mongoose.Schema({
     class: {
       type: Number,
       min: 1,
-      max: 10
+      max: 10,
+      default: 1,
+      required: false
     },
     school: String,
     subjects: [String],
     parentId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
+      ref: 'User',
+      required: false
     }
   },
   // Fields specific to parents
@@ -81,13 +84,18 @@ const userSchema = new mongoose.Schema({
   // Fields specific to teachers
   teacherDetails: {
     qualifications: [String],
-    experience: Number, // in years
+    experience: {
+      type: Number, // in years
+      default: 0,
+      required: false
+    },
     bio: String,
     subjects: [String],
     classesOffered: [{
       type: Number,
       min: 1,
-      max: 10
+      max: 10,
+      required: false
     }],
     languages: [String],
     hourlyRate: {

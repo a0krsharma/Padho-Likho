@@ -68,7 +68,38 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       setLoading(true);
-      const response = await axios.post('/api/auth/register', userData);
+      
+      // Prepare the data for the backend
+      const registrationData = {
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        password: userData.password,
+        role: userData.role,
+        phone: userData.phone,
+        // Send address fields directly as expected by the backend
+        address: userData.address || '',
+        city: userData.city || '',
+        state: userData.state || '',
+        zipCode: userData.zipCode || '',
+        country: userData.country || ''
+      };
+      
+      // Add role-specific data
+      if (userData.role === 'student') {
+        registrationData.class = userData.class;
+        registrationData.subjects = userData.subjects;
+      } else if (userData.role === 'teacher') {
+        registrationData.subjects = userData.subjects;
+        registrationData.qualifications = userData.qualifications;
+        registrationData.experience = userData.experience;
+      }
+      
+      console.log('Sending registration data:', JSON.stringify(registrationData, null, 2));
+      
+      const response = await axios.post('/api/auth/register', registrationData);
+      
+      console.log('Registration response:', response.data);
       
       const { token, user } = response.data;
       
@@ -83,6 +114,7 @@ export const AuthProvider = ({ children }) => {
       return true;
     } catch (err) {
       console.error('Registration error:', err);
+      console.error('Error details:', err.response?.data);
       setError(err.response?.data?.message || 'Registration failed. Please try again.');
       return false;
     } finally {

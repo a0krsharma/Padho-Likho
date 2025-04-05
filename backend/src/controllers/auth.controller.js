@@ -5,10 +5,17 @@ const { validationResult } = require('express-validator');
 // Register a new user
 exports.register = async (req, res) => {
   try {
+    console.log('Registration request body:', JSON.stringify(req.body, null, 2));
+    
     // Check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      console.log('Validation errors:', errors.array());
+      return res.status(400).json({ 
+        success: false,
+        errors: errors.array(),
+        message: 'Validation failed'
+      });
     }
 
     const { 
@@ -40,26 +47,28 @@ exports.register = async (req, res) => {
 
     // Create user based on role
     const userData = {
-      name: `${firstName} ${lastName}`,
+      name: `${firstName} ${lastName}`.trim(),
       email,
       password,
       role: role || 'student',
-      phone,
+      phone: phone || '',
       address: {
-        street: address,
-        city,
-        state,
-        pincode: zipCode,
-        country
+        street: typeof address === 'object' ? address.street : address || '',
+        city: city || '',
+        state: state || '',
+        pincode: zipCode || '',
+        country: country || ''
       }
     };
+    
+    console.log('Processed user data:', userData);
 
     // Add role-specific details
     if (role === 'teacher') {
       userData.teacherDetails = {
-        qualifications: qualifications ? [qualifications] : [],
+        qualifications: qualifications ? (Array.isArray(qualifications) ? qualifications : [qualifications]) : [],
         experience: experience ? Number(experience) : 0,
-        subjects: subjects || [],
+        subjects: Array.isArray(subjects) ? subjects : (subjects ? [subjects] : []),
         hourlyRate: {
           individual: 2999,
           twoStudents: 1499,
@@ -67,16 +76,39 @@ exports.register = async (req, res) => {
           tenStudents: 299
         }
       };
+      console.log('Teacher details:', userData.teacherDetails);
     } else if (role === 'student') {
       userData.studentDetails = {
         class: classGrade ? Number(classGrade) : 1,
-        subjects: subjects || []
+        subjects: Array.isArray(subjects) ? subjects : (subjects ? [subjects] : [])
       };
+      console.log('Student details:', userData.studentDetails);
+    } else if (role === 'parent') {
+      userData.parentDetails = {
+        childrenIds: []
+      };
+      console.log('Parent details:', userData.parentDetails);
     }
 
     // Create new user
     const user = new User(userData);
-    await user.save();
+    
+    // Generate email verification token
+    const verificationToken = user.generateVerificationToken();
+    
+    try {
+      // Save user with verification token
+      await user.save();
+      console.log('User saved successfully');
+    } catch (saveError) {
+      console.error('Error saving user:', saveError);
+      // If there's a validation error, throw it to be caught by the outer catch block
+      if (saveError.name === 'ValidationError') {
+        throw saveError;
+      }
+      // For other errors, provide a more specific message
+      throw new Error('Failed to save user: ' + saveError.message);
+    }
 
     // Generate JWT token
     const token = jwt.sign(
@@ -85,15 +117,46 @@ exports.register = async (req, res) => {
       { expiresIn: '7d' }
     );
 
+    // In a production app, you would send an email with the verification link
+    // For now, just include it in the response
+
     res.status(201).json({
       success: true,
       message: 'User registered successfully',
       token,
-      user: user.getPublicProfile()
+      user: user.getPublicProfile(),
+      verificationToken // This would normally be sent via email
     });
   } catch (error) {
     console.error('Registration error:', error);
-    res.status(500).json({ message: 'Server error during registration' });
+    console.error('Error stack:', error.stack);
+    
+    let statusCode = 500;
+    let errorMessage = 'Server error during registration';
+    let errorDetails = null;
+    
+    // Handle specific MongoDB errors
+    if (error.name === 'ValidationError') {
+      statusCode = 400;
+      errorMessage = Object.values(error.errors).map(err => err.message).join(', ');
+      errorDetails = error.errors;
+      console.error('Validation error details:', errorDetails);
+    } else if (error.code === 11000) { // Duplicate key error
+      statusCode = 400;
+      errorMessage = 'Email already in use';
+    } else {
+      // For other errors, provide more details
+      console.error('Unexpected error type:', error.name);
+      if (error.message) {
+        console.error('Error message:', error.message);
+      }
+    }
+    
+    res.status(statusCode).json({ 
+      success: false,
+      message: errorMessage,
+      details: errorDetails
+    });
   }
 };
 
@@ -105,7 +168,8 @@ exports.login = async (req, res) => {
     if (!errors.isEmpty()) {
       return res.status(400).json({ 
         success: false,
-        errors: errors.array() 
+        errors: errors.array(),
+        message: 'Validation failed'
       });
     }
 
@@ -136,15 +200,30 @@ exports.login = async (req, res) => {
       { expiresIn: '7d' }
     );
 
+    // Return role-specific data
+    const userData = user.getPublicProfile();
+    
     res.json({
       success: true,
       message: 'Login successful',
       token,
-      user: user.getPublicProfile()
+      user: userData
     });
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ message: 'Server error during login' });
+    let statusCode = 500;
+    let errorMessage = 'Server error during login';
+    
+    // Handle specific errors
+    if (error.name === 'ValidationError') {
+      statusCode = 400;
+      errorMessage = Object.values(error.errors).map(err => err.message).join(', ');
+    }
+    
+    res.status(statusCode).json({ 
+      success: false,
+      message: errorMessage 
+    });
   }
 };
 
