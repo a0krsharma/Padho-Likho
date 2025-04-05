@@ -1,25 +1,23 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React from 'react';
 import axios from 'axios';
 
-// Configure axios base URL based on environment
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-axios.defaults.baseURL = API_BASE_URL;
+// Create context first
+const AuthContext = React.createContext();
 
-// Create context
-const AuthContext = createContext(null);
+// Export the context hook
+export function useAuth() {
+  return React.useContext(AuthContext);
+}
 
-// Custom hook to use the auth context
-export const useAuth = () => useContext(AuthContext);
+// Export the provider component
+export function AuthProvider({ children }) {
+  // State declarations
+  const [currentUser, setCurrentUser] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(null);
 
-// Auth provider component
-export const AuthProvider = ({ children }) => {
-  // State
-  const [currentUser, setCurrentUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  // Helper function to clear authentication
-  function clearAuthState() {
+  // Clear auth helper
+  function clearAuth() {
     localStorage.removeItem('token');
     if (axios.defaults.headers.common['Authorization']) {
       delete axios.defaults.headers.common['Authorization'];
@@ -29,65 +27,60 @@ export const AuthProvider = ({ children }) => {
   }
 
   // Logout function
-  const logout = () => {
-    clearAuthState();
-  };
+  function logout() {
+    clearAuth();
+  }
 
-  // Function to fetch current user
-  const fetchCurrentUser = async (token) => {
+  // Check user function
+  async function checkUser(token) {
     try {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       const response = await axios.get('/api/auth/me');
       setCurrentUser(response.data.user);
       setError(null);
     } catch (err) {
-      console.error('Error fetching current user:', err);
-      clearAuthState();
-      setError('Session expired. Please login again.');
+      console.error('Error fetching user:', err);
+      clearAuth();
+      setError('Session expired');
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  // Check if user is already logged in on component mount
-  useEffect(() => {
+  // Initialize on mount
+  React.useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      fetchCurrentUser(token);
+      checkUser(token);
     } else {
       setLoading(false);
     }
   }, []);
 
   // Login function
-  const login = async (email, password) => {
+  async function login(email, password) {
     try {
       setLoading(true);
       const response = await axios.post('/api/auth/login', { email, password });
-      
       const { token, user } = response.data;
-      
       localStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      
       setCurrentUser(user);
       setError(null);
       return true;
     } catch (err) {
       console.error('Login error:', err);
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
+      setError(err.response?.data?.message || 'Login failed');
       return false;
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   // Register function
-  const register = async (userData) => {
+  async function register(userData) {
     try {
       setLoading(true);
-      
-      // Prepare the data for the backend
       const registrationData = {
         firstName: userData.firstName,
         lastName: userData.lastName,
@@ -102,7 +95,6 @@ export const AuthProvider = ({ children }) => {
         country: userData.country || ''
       };
       
-      // Add role-specific data
       if (userData.role === 'student') {
         registrationData.class = userData.class;
         registrationData.subjects = userData.subjects;
@@ -112,50 +104,41 @@ export const AuthProvider = ({ children }) => {
         registrationData.experience = userData.experience;
       }
       
-      console.log('Sending registration data:', JSON.stringify(registrationData, null, 2));
-      
       const response = await axios.post('/api/auth/register', registrationData);
-      
-      console.log('Registration response:', response.data);
-      
       const { token, user } = response.data;
-      
       localStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      
       setCurrentUser(user);
       setError(null);
       return true;
     } catch (err) {
       console.error('Registration error:', err);
-      console.error('Error details:', err.response?.data);
-      setError(err.response?.data?.message || 'Registration failed. Please try again.');
+      setError(err.response?.data?.message || 'Registration failed');
       return false;
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   // Update profile function
-  const updateProfile = async (userData) => {
+  async function updateProfile(userData) {
     try {
       setLoading(true);
       const response = await axios.put('/api/users/profile', userData);
-      
       setCurrentUser(response.data.user);
       setError(null);
       return response.data.user;
     } catch (err) {
       console.error('Update profile error:', err);
-      setError(err.response?.data?.message || 'Failed to update profile. Please try again.');
+      setError(err.response?.data?.message || 'Failed to update profile');
       throw err;
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   // Forgot password function
-  const forgotPassword = async (email) => {
+  async function forgotPassword(email) {
     try {
       setLoading(true);
       const response = await axios.post('/api/auth/forgot-password', { email });
@@ -163,15 +146,15 @@ export const AuthProvider = ({ children }) => {
       return response.data;
     } catch (err) {
       console.error('Forgot password error:', err);
-      setError(err.response?.data?.message || 'Failed to process request. Please try again.');
+      setError(err.response?.data?.message || 'Failed to process request');
       throw err;
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   // Reset password function
-  const resetPassword = async (token, newPassword) => {
+  async function resetPassword(token, newPassword) {
     try {
       setLoading(true);
       const response = await axios.post('/api/auth/reset-password', { token, newPassword });
@@ -179,14 +162,14 @@ export const AuthProvider = ({ children }) => {
       return response.data;
     } catch (err) {
       console.error('Reset password error:', err);
-      setError(err.response?.data?.message || 'Failed to reset password. Please try again.');
+      setError(err.response?.data?.message || 'Failed to reset password');
       throw err;
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  // Context value
+  // Create value object
   const value = {
     currentUser,
     loading,
@@ -199,5 +182,10 @@ export const AuthProvider = ({ children }) => {
     resetPassword
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
+  // Return provider
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
