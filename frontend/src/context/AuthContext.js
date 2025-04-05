@@ -1,6 +1,10 @@
 import React from 'react';
 import axios from 'axios';
 
+// Configure axios base URL based on environment
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://padho-likho-backend.onrender.com';
+axios.defaults.baseURL = API_BASE_URL;
+
 // Create context first
 const AuthContext = React.createContext();
 
