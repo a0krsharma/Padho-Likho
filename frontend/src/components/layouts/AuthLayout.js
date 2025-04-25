@@ -53,7 +53,7 @@ const AuthLayout = () => {
                   &copy; {new Date().getFullYear()} Padho Likho. All rights reserved.
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  <Link to="/privacy-policy" style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <Link to="/privacy-policy" style={{ textDecoration: 'underline', color: '#4361ee', fontWeight: 'bold' }}>
                     Privacy Policy
                   </Link>
                   {' | '}

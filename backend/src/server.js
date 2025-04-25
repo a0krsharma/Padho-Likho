@@ -34,13 +34,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Database connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/padho-likho';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/padho-likho';
+// Commenting out MongoDB connection for now to allow server to start
+/*
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
 .then(() => console.log('Connected to MongoDB'))
 .catch(err => console.error('MongoDB connection error:', err));
+*/
+console.log('Running with mock database - MongoDB connection disabled');
 
 // API routes
 app.use('/api/auth', authRoutes);

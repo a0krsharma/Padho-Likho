@@ -232,11 +232,15 @@ const Register = () => {
       // Add role-specific data
       if (formData.role === 'student') {
         userData.class = formData.class || '1';
-        userData.subjects = Array.isArray(formData.subjects) ? formData.subjects : 
-                           (formData.subjects ? [formData.subjects] : []);
+        // Fix the subjects array format - flatten nested arrays
+        userData.subjects = Array.isArray(formData.subjects) ? 
+          (formData.subjects.flat().filter(subject => typeof subject === 'string')) : 
+          (formData.subjects ? [formData.subjects] : []);
       } else if (formData.role === 'teacher') {
-        userData.subjects = Array.isArray(formData.subjects) ? formData.subjects : 
-                           (formData.subjects ? [formData.subjects] : []);
+        // Fix the subjects array format - flatten nested arrays
+        userData.subjects = Array.isArray(formData.subjects) ? 
+          (formData.subjects.flat().filter(subject => typeof subject === 'string')) : 
+          (formData.subjects ? [formData.subjects] : []);
         userData.qualifications = formData.qualifications || '';
         userData.experience = formData.experience || '0';
       }

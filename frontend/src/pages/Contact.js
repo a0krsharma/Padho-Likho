@@ -156,7 +156,7 @@ const Contact = () => {
                     Email
                   </Typography>
                   <Typography variant="body1">
-                    support@padholikho.com, a0krsharma@gmail.com
+                    a0krsharma@gmail.com
                   </Typography>
                 </Box>
               </Box>
@@ -202,8 +202,7 @@ const Contact = () => {
                     Address
                   </Typography>
                   <Typography variant="body1">
-                    Vill - Gaudhapar, PS - Chandi,<br />
-                    PO - Barhauna, India
+                    Patna, Kankarbagh, 800020
                   </Typography>
                 </Box>
               </Box>

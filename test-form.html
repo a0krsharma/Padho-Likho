@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Padho-Likho Registration Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #3f51b5;
+    }
+    .form-container {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    select[multiple] {
+      height: 100px;
+    }
+    button {
+      background-color: #3f51b5;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #303f9f;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #f9f9f9;
+      white-space: pre-wrap;
+    }
+    .success {
+      border-color: #4caf50;
+      background-color: #e8f5e9;
+    }
+    .error {
+      border-color: #f44336;
+      background-color: #ffebee;
+    }
+    .tab-container {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    .tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      background-color: #f1f1f1;
+      cursor: pointer;
+    }
+    .tab.active {
+      background-color: #3f51b5;
+      color: white;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <h1>Padho-Likho Registration Test</h1>
+  
+  <div class="tab-container">
+    <div class="tab active" onclick="showTab('student')">Student Registration</div>
+    <div class="tab" onclick="showTab('teacher')">Teacher Registration</div>
+    <div class="tab" onclick="showTab('parent')">Parent Registration</div>
+  </div>
+  
+  <!-- Student Registration Form -->
+  <div id="student-tab" class="tab-content active">
+    <div class="form-container">
+      <h2>Student Registration</h2>
+      <div class="form-group">
+        <label for="student-firstName">First Name</label>
+        <input type="text" id="student-firstName" value="Test">
+      </div>
+      
+      <div class="form-group">
+        <label for="student-lastName">Last Name</label>
+        <input type="text" id="student-lastName" value="Student">
+      </div>
+      
+      <div class="form-group">
+        <label for="student-email">Email</label>
+        <input type="email" id="student-email" value="">
+      </div>
+      
+      <div class="form-group">
+        <label for="student-password">Password</label>
+        <input type="password" id="student-password" value="password123">
+      </div>
+      
+      <div class="form-group">
+        <label for="student-phone">Phone</label>
+        <input type="text" id="student-phone" value="1234567890">
+      </div>
+      
+      <div class="form-group">
+        <label for="student-address">Address</label>
+        <input type="text" id="student-address" value="123 Test St">
+      </div>
+      
+      <div class="form-group">
+        <label for="student-city">City</label>
+        <input type="text" id="student-city" value="Test City">
+      </div>
+      
+      <div class="form-group">
+        <label for="student-state">State</label>
+        <input type="text" id="student-state" value="Test State">
+      </div>
+      
+      <div class="form-group">
+        <label for="student-zipCode">Zip Code</label>
+        <input type="text" id="student-zipCode" value="12345">
+      </div>
+      
+      <div class="form-group">
+        <label for="student-country">Country</label>
+        <input type="text" id="student-country" value="Test Country">
+      </div>
+      
+      <div class="form-group">
+        <label for="student-class">Class</label>
+        <input type="text" id="student-class" value="5">
+      </div>
+      
+      <div class="form-group">
+        <label for="student-subjects">Subjects</label>
+        <select id="student-subjects" multiple>
+          <option value="Math" selected>Math</option>
+          <option value="Science" selected>Science</option>
+          <option value="English">English</option>
+          <option value="History">History</option>
+          <option value="Geography">Geography</option>
+        </select>
+        <small>Hold Ctrl/Cmd to select multiple subjects</small>
+      </div>
+      
+      <button onclick="registerStudent()">Register Student</button>
+    </div>
+    
+    <div id="student-result" class="result" style="display: none;"></div>
+  </div>
+  
+  <!-- Teacher Registration Form -->
+  <div id="teacher-tab" class="tab-content">
+    <div class="form-container">
+      <h2>Teacher Registration</h2>
+      <div class="form-group">
+        <label for="teacher-firstName">First Name</label>
+        <input type="text" id="teacher-firstName" value="Test">
+      </div>
+      
+      <div class="form-group">
+        <label for="teacher-lastName">Last Name</label>
+        <input type="text" id="teacher-lastName" value="Teacher">
+      </div>
+      
+      <div class="form-group">
+        <label for="teacher-email">Email</label>
+        <input type="email" id="teacher-email" value="">
+      </div>
+      
+      <div class="form-group">
+        <label for="teacher-password">Password</label>
+        <input type="password" id="teacher-password" value="password123">
+      </div>
+      
+      <div class="form-group">
+        <label for="teacher-phone">Phone</label>
+        <input type="text" id="teacher-phone" value="9876543210">
+      </div>
+      
+      <div class="form-group">
+        <label for="teacher-address">Address</label>
+        <input type="text" id="teacher-address" value="456 Test Ave">
+      </div>
+      
+      <div class="form-group">
+        <label for="teacher-city">City</label>
+        <input type="text" id="teacher-city" value="Test City">
+      </div>
+      
+      <div class="form-group">
+        <label for="teacher-state">State</label>
+        <input type="text" id="teacher-state" value="Test State">
+      </div>
+      
+      <div class="form-group">
+        <label for="teacher-zipCode">Zip Code</label>
+        <input type="text" id="teacher-zipCode" value="54321">
+      </div>
+      
+      <div class="form-group">
+        <label for="teacher-country">Country</label>
+        <input type="text" id="teacher-country" value="Test Country">
+      </div>
+      
+      <div class="form-group">
+        <label for="teacher-qualifications">Qualifications</label>
+        <input type="text" id="teacher-qualifications" value="PhD in Education">
+      </div>
+      
+      <div class="form-group">
+        <label for="teacher-experience">Experience (years)</label>
+        <input type="text" id="teacher-experience" value="5">
+      </div>
+      
+      <div class="form-group">
+        <label for="teacher-subjects">Subjects</label>
+        <select id="teacher-subjects" multiple>
+          <option value="Math" selected>Math</option>
+          <option value="Science" selected>Science</option>
+          <option value="English">English</option>
+          <option value="History">History</option>
+          <option value="Geography">Geography</option>
+        </select>
+        <small>Hold Ctrl/Cmd to select multiple subjects</small>
+      </div>
+      
+      <button onclick="registerTeacher()">Register Teacher</button>
+    </div>
+    
+    <div id="teacher-result" class="result" style="display: none;"></div>
+  </div>
+  
+  <!-- Parent Registration Form -->
+  <div id="parent-tab" class="tab-content">
+    <div class="form-container">
+      <h2>Parent Registration</h2>
+      <div class="form-group">
+        <label for="parent-firstName">First Name</label>
+        <input type="text" id="parent-firstName" value="Test">
+      </div>
+      
+      <div class="form-group">
+        <label for="parent-lastName">Last Name</label>
+        <input type="text" id="parent-lastName" value="Parent">
+      </div>
+      
+      <div class="form-group">
+        <label for="parent-email">Email</label>
+        <input type="email" id="parent-email" value="">
+      </div>
+      
+      <div class="form-group">
+        <label for="parent-password">Password</label>
+        <input type="password" id="parent-password" value="password123">
+      </div>
+      
+      <div class="form-group">
+        <label for="parent-phone">Phone</label>
+        <input type="text" id="parent-phone" value="5555555555">
+      </div>
+      
+      <div class="form-group">
+        <label for="parent-address">Address</label>
+        <input type="text" id="parent-address" value="789 Test Blvd">
+      </div>
+      
+      <div class="form-group">
+        <label for="parent-city">City</label>
+        <input type="text" id="parent-city" value="Test City">
+      </div>
+      
+      <div class="form-group">
+        <label for="parent-state">State</label>
+        <input type="text" id="parent-state" value="Test State">
+      </div>
+      
+      <div class="form-group">
+        <label for="parent-zipCode">Zip Code</label>
+        <input type="text" id="parent-zipCode" value="67890">
+      </div>
+      
+      <div class="form-group">
+        <label for="parent-country">Country</label>
+        <input type="text" id="parent-country" value="Test Country">
+      </div>
+      
+      <button onclick="registerParent()">Register Parent</button>
+    </div>
+    
+    <div id="parent-result" class="result" style="display: none;"></div>
+  </div>
+  
+  <script>
+    // Generate unique email for each form
+    document.getElementById('student-email').value = `test.student.${Date.now()}@example.com`;
+    document.getElementById('teacher-email').value = `test.teacher.${Date.now()}@example.com`;
+    document.getElementById('parent-email').value = `test.parent.${Date.now()}@example.com`;
+    
+    // Tab switching
+    function showTab(tabName) {
+      // Hide all tabs
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Show selected tab
+      document.getElementById(`${tabName}-tab`).classList.add('active');
+      
+      // Highlight selected tab button
+      document.querySelectorAll('.tab').forEach(tab => {
+        if (tab.textContent.toLowerCase().includes(tabName)) {
+          tab.classList.add('active');
+        }
+      });
+    }
+    
+    // Student registration
+    async function registerStudent() {
+      const resultElement = document.getElementById('student-result');
+      resultElement.style.display = 'block';
+      resultElement.innerHTML = 'Sending registration request...';
+      resultElement.className = 'result';
+      
+      const studentData = {
+        firstName: document.getElementById('student-firstName').value,
+        lastName: document.getElementById('student-lastName').value,
+        email: document.getElementById('student-email').value,
+        password: document.getElementById('student-password').value,
+        role: 'student',
+        phone: document.getElementById('student-phone').value,
+        address: document.getElementById('student-address').value,
+        city: document.getElementById('student-city').value,
+        state: document.getElementById('student-state').value,
+        zipCode: document.getElementById('student-zipCode').value,
+        country: document.getElementById('student-country').value,
+        class: document.getElementById('student-class').value,
+        subjects: Array.from(document.getElementById('student-subjects').selectedOptions).map(option => option.value)
+      };
+      
+      console.log('Student registration data:', studentData);
+      
+      try {
+        const response = await fetch('http://localhost:5000/api/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(studentData)
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          resultElement.innerHTML = 'Registration successful!<br><br>Response: ' + JSON.stringify(data, null, 2);
+          resultElement.className = 'result success';
+          // Generate new email for next test
+          document.getElementById('student-email').value = `test.student.${Date.now()}@example.com`;
+        } else {
+          resultElement.innerHTML = 'Registration failed!<br><br>Error: ' + JSON.stringify(data, null, 2);
+          resultElement.className = 'result error';
+        }
+      } catch (error) {
+        resultElement.innerHTML = 'Registration failed!<br><br>Error: ' + error.message;
+        resultElement.className = 'result error';
+      }
+    }
+    
+    // Teacher registration
+    async function registerTeacher() {
+      const resultElement = document.getElementById('teacher-result');
+      resultElement.style.display = 'block';
+      resultElement.innerHTML = 'Sending registration request...';
+      resultElement.className = 'result';
+      
+      const teacherData = {
+        firstName: document.getElementById('teacher-firstName').value,
+        lastName: document.getElementById('teacher-lastName').value,
+        email: document.getElementById('teacher-email').value,
+        password: document.getElementById('teacher-password').value,
+        role: 'teacher',
+        phone: document.getElementById('teacher-phone').value,
+        address: document.getElementById('teacher-address').value,
+        city: document.getElementById('teacher-city').value,
+        state: document.getElementById('teacher-state').value,
+        zipCode: document.getElementById('teacher-zipCode').value,
+        country: document.getElementById('teacher-country').value,
+        qualifications: document.getElementById('teacher-qualifications').value,
+        experience: document.getElementById('teacher-experience').value,
+        subjects: Array.from(document.getElementById('teacher-subjects').selectedOptions).map(option => option.value)
+      };
+      
+      console.log('Teacher registration data:', teacherData);
+      
+      try {
+        const response = await fetch('http://localhost:5000/api/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(teacherData)
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          resultElement.innerHTML = 'Registration successful!<br><br>Response: ' + JSON.stringify(data, null, 2);
+          resultElement.className = 'result success';
+          // Generate new email for next test
+          document.getElementById('teacher-email').value = `test.teacher.${Date.now()}@example.com`;
+        } else {
+          resultElement.innerHTML = 'Registration failed!<br><br>Error: ' + JSON.stringify(data, null, 2);
+          resultElement.className = 'result error';
+        }
+      } catch (error) {
+        resultElement.innerHTML = 'Registration failed!<br><br>Error: ' + error.message;
+        resultElement.className = 'result error';
+      }
+    }
+    
+    // Parent registration
+    async function registerParent() {
+      const resultElement = document.getElementById('parent-result');
+      resultElement.style.display = 'block';
+      resultElement.innerHTML = 'Sending registration request...';
+      resultElement.className = 'result';
+      
+      const parentData = {
+        firstName: document.getElementById('parent-firstName').value,
+        lastName: document.getElementById('parent-lastName').value,
+        email: document.getElementById('parent-email').value,
+        password: document.getElementById('parent-password').value,
+        role: 'parent',
+        phone: document.getElementById('parent-phone').value,
+        address: document.getElementById('parent-address').value,
+        city: document.getElementById('parent-city').value,
+        state: document.getElementById('parent-state').value,
+        zipCode: document.getElementById('parent-zipCode').value,
+        country: document.getElementById('parent-country').value
+      };
+      
+      console.log('Parent registration data:', parentData);
+      
+      try {
+        const response = await fetch('http://localhost:5000/api/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(parentData)
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          resultElement.innerHTML = 'Registration successful!<br><br>Response: ' + JSON.stringify(data, null, 2);
+          resultElement.className = 'result success';
+          // Generate new email for next test
+          document.getElementById('parent-email').value = `test.parent.${Date.now()}@example.com`;
+        } else {
+          resultElement.innerHTML = 'Registration failed!<br><br>Error: ' + JSON.stringify(data, null, 2);
+          resultElement.className = 'result error';
+        }
+      } catch (error) {
+        resultElement.innerHTML = 'Registration failed!<br><br>Error: ' + error.message;
+        resultElement.className = 'result error';
+      }
+    }
+  </script>
+</body>
+</html>

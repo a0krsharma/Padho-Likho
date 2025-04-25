@@ -28,7 +28,7 @@ router.post(
 );
 
 // Get current user profile
-router.get('/me', auth, authController.getCurrentUser);
+router.get('/me', authController.getCurrentUser);
 
 // Verify email
 router.get('/verify-email/:token', authController.verifyEmail);

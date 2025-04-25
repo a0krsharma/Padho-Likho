@@ -48,20 +48,23 @@ import {
   Person as PersonIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import BookFreeTrial from '../components/BookFreeTrial';
+
 
 // Feature card component
 const FeatureCard = ({ icon, title, description }) => (
-  <Card elevation={2} sx={{ height: '100%', display: 'flex', flexDirection: 'column', borderRadius: 3, transition: 'transform 0.3s', '&:hover': { transform: 'translateY(-5px)' } }}>
-    <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', p: 3 }}>
+  <Card elevation={4} sx={{ height: '100%', display: 'flex', flexDirection: 'column', borderRadius: 4, boxShadow: '0 8px 32px 0 rgba(67,97,238,0.10)', transition: 'transform 0.3s, box-shadow 0.3s', '&:hover': { transform: 'translateY(-8px) scale(1.03)', boxShadow: '0 16px 40px 0 rgba(67,97,238,0.18)' }, bgcolor: 'background.paper', my: 2 }}>
+    <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', p: { xs: 2, md: 4 } }}>
       <Box sx={{ 
-        backgroundColor: 'primary.light', 
+        background: 'linear-gradient(135deg, #4361ee 0%, #738eef 100%)', 
         borderRadius: '50%', 
         width: 70, 
         height: 70, 
         display: 'flex', 
         justifyContent: 'center', 
         alignItems: 'center',
-        mb: 2
+        mb: 2,
+        boxShadow: '0 2px 8px rgba(67,97,238,0.10)'
       }}>
         {icon}
       </Box>
@@ -103,16 +106,19 @@ const PricingCard = ({ title, price, description, features, recommended }) => {
   
   return (
     <Card 
-      elevation={recommended ? 8 : 2} 
+      elevation={recommended ? 12 : 4} 
       sx={{ 
         height: '100%', 
         display: 'flex', 
         flexDirection: 'column', 
-        borderRadius: 3,
+        borderRadius: 5,
         position: 'relative',
-        border: recommended ? `2px solid ${theme.palette.primary.main}` : 'none',
-        transition: 'transform 0.3s',
-        '&:hover': { transform: 'translateY(-5px)' }
+        border: recommended ? `2.5px solid ${theme.palette.primary.main}` : 'none',
+        boxShadow: recommended ? '0 12px 32px 0 rgba(67,97,238,0.15)' : '0 6px 18px 0 rgba(67,97,238,0.10)',
+        transition: 'transform 0.3s, box-shadow 0.3s',
+        '&:hover': { transform: 'translateY(-8px) scale(1.03)', boxShadow: '0 20px 40px 0 rgba(67,97,238,0.22)' },
+        bgcolor: 'background.paper',
+        my: 2
       }}
     >
       {recommended && (
@@ -162,6 +168,7 @@ const PricingCard = ({ title, price, description, features, recommended }) => {
           color="primary" 
           fullWidth
           size="large"
+          sx={{ borderRadius: 3, fontWeight: 600, fontSize: '1.1rem', py: 1.5, boxShadow: '0 2px 8px rgba(67,97,238,0.08)', transition: 'background 0.2s', '&:hover': { background: 'linear-gradient(135deg, #4361ee 0%, #738eef 100%)', color: 'white' } }}
           onClick={() => navigate('/register')}
         >
           Get Started
@@ -174,10 +181,10 @@ const PricingCard = ({ title, price, description, features, recommended }) => {
 // Subject card component
 const SubjectCard = ({ icon, title, color, onClick }) => (
   <Paper 
-    elevation={2} 
+    elevation={4} 
     sx={{ 
-      p: 2, 
-      borderRadius: 3, 
+      p: { xs: 2, md: 3 }, 
+      borderRadius: 4, 
       height: '100%',
       display: 'flex',
       flexDirection: 'column',
@@ -185,10 +192,11 @@ const SubjectCard = ({ icon, title, color, onClick }) => (
       justifyContent: 'center',
       textAlign: 'center',
       cursor: 'pointer',
+      boxShadow: '0 6px 18px 0 rgba(67,97,238,0.10)',
       transition: 'transform 0.3s, box-shadow 0.3s',
       '&:hover': { 
-        transform: 'translateY(-5px)',
-        boxShadow: 6
+        transform: 'translateY(-8px) scale(1.03)',
+        boxShadow: '0 16px 40px 0 rgba(67,97,238,0.18)'
       }
     }}
     onClick={onClick}
@@ -259,6 +267,24 @@ const Home = () => {
   return (
     <Box>
       {/* Hero Section */}
+      <Box 
+        sx={{ 
+          background: 'linear-gradient(135deg, #e0ecff 0%, #f9f9ff 100%)',
+          py: { xs: 8, md: 12 },
+          textAlign: 'center'
+        }}
+      >
+        <Container maxWidth="md">
+          <Typography variant="h2" fontWeight="bold" gutterBottom>
+            Welcome to Padho Likho
+          </Typography>
+          <Typography variant="h5" color="text.secondary" sx={{ mb: 4 }}>
+            Unlock your child’s potential with India’s best teachers and personalized learning programs.
+          </Typography>
+        </Container>
+      </Box>
+
+
       <Box 
         sx={{ 
           backgroundColor: 'primary.light',
@@ -343,6 +369,41 @@ const Home = () => {
               />
             </Grid>
           </Grid>
+        </Container>
+      </Box>
+
+      {/* Book Free Trial Section */}
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: { xs: 4, md: 6 } }}>
+        <Container maxWidth="md">
+          <Paper elevation={6} sx={{
+            p: { xs: 3, md: 5 },
+            borderRadius: 4,
+            boxShadow: '0 8px 32px 0 rgba(67,97,238,0.10)',
+            background: 'rgba(255,255,255,0.98)',
+            maxWidth: 600,
+            mx: 'auto',
+            mt: { xs: -8, md: -12 }
+          }}>
+            <Typography variant="h4" fontWeight="bold" align="center" gutterBottom color="primary.main">
+              Book a Free Trial Class
+            </Typography>
+            <Typography variant="subtitle1" align="center" color="text.secondary" sx={{ mb: 4 }}>
+              Start your child’s journey to academic excellence! Simply fill out the Google Form below to book your free trial class.
+            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <iframe
+                src="https://docs.google.com/forms/d/e/1FAIpQLSd8b9hh4r1xZpohp_xOqFXgwNGMldLoXfHKqS76nQ2N8o6RTQ/viewform?embedded=true"
+                width="100%"
+                height="700"
+                frameBorder="0"
+                style={{ borderRadius: 8, minHeight: 600 }}
+                title="Free Trial Booking Google Form"
+                allowFullScreen
+              >
+                Loading…
+              </iframe>
+            </Box>
+          </Paper>
         </Container>
       </Box>
 

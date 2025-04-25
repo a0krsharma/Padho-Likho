@@ -4,8 +4,6 @@ import {
   Container, 
   Typography, 
   Grid, 
-  Card, 
-  CardContent, 
   Button, 
   Avatar,
   Divider,
@@ -29,9 +27,16 @@ import {
   School as SchoolIcon,
   MoreVert as MoreVertIcon,
   Cancel as CancelIcon,
-  Reschedule as RescheduleIcon
+  Update as RescheduleIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+
+// Import custom components
+import ContentCard from '../../components/common/ContentCard';
+import UserAvatar from '../../components/common/UserAvatar';
+import DataTable from '../../components/common/DataTable';
+import Breadcrumbs from '../../components/common/Breadcrumbs';
+import Calendar from '../../components/common/Calendar';
 
 // Sample booking data
 const bookingsData = [
@@ -107,119 +112,135 @@ const bookingsData = [
   }
 ];
 
+// BookingCard component with our custom components
 const BookingCard = ({ booking, onViewDetails, onCancel, onReschedule }) => {
   const theme = useTheme();
+  const [menuAnchorEl, setMenuAnchorEl] = useState(null);
+  const open = Boolean(menuAnchorEl);
   
-  // Get status color
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'upcoming':
-        return theme.palette.primary.main;
-      case 'completed':
-        return theme.palette.success.main;
-      case 'cancelled':
-        return theme.palette.error.main;
-      default:
-        return theme.palette.text.secondary;
-    }
+  const handleMenuClick = (event) => {
+    setMenuAnchorEl(event.currentTarget);
   };
   
-  // Format date
-  const formatDate = (dateString) => {
-    const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString('en-US', options);
+  const handleMenuClose = () => {
+    setMenuAnchorEl(null);
   };
+  
+  // Format date for display
+  const formattedDate = new Date(booking.date).toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+  
+  // Status color mapping
+  const statusColor = 
+    booking.status === 'upcoming' ? 'primary' :
+    booking.status === 'completed' ? 'success' :
+    booking.status === 'cancelled' ? 'error' :
+    'warning';
+  
+  // Status label mapping
+  const statusLabel = 
+    booking.status === 'upcoming' ? 'Upcoming' :
+    booking.status === 'completed' ? 'Completed' :
+    booking.status === 'cancelled' ? 'Cancelled' :
+    'Rescheduled';
   
   return (
-    <Paper elevation={1} sx={{ mb: 3, borderRadius: 3, overflow: 'hidden' }}>
-      <Box 
-        sx={{ 
-          p: 0.5, 
-          bgcolor: getStatusColor(booking.status),
-          color: 'white',
-          textAlign: 'center',
-          textTransform: 'uppercase',
-          fontSize: '0.75rem',
-          fontWeight: 'bold'
-        }}
-      >
-        {booking.status}
-      </Box>
+    <Paper elevation={2} sx={{ borderRadius: 2, overflow: 'hidden', mb: 3 }}>
       <Box sx={{ p: 2 }}>
-        <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} sm={7}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Avatar src={booking.teacher.image} sx={{ mr: 2 }} />
-              <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'medium' }}>
-                  {booking.subject}: {booking.topic}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
-                  <PersonIcon fontSize="small" sx={{ mr: 0.5 }} /> {booking.teacher.name}
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
-          <Grid item xs={12} sm={3}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <UserAvatar 
+              name={booking.teacher.name}
+              image={booking.teacher.image}
+              role="teacher"
+              sx={{ mr: 2, width: 56, height: 56 }}
+            />
             <Box>
-              <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center' }}>
-                <EventIcon fontSize="small" sx={{ mr: 0.5 }} /> {formatDate(booking.date)}
+              <Typography variant="h6" gutterBottom>
+                {booking.subject}: {booking.topic}
               </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
-                <AccessTimeIcon fontSize="small" sx={{ mr: 0.5 }} /> {booking.time}
+              <Typography variant="body2" color="text.secondary">
+                Teacher: {booking.teacher.name}
+              </Typography>
+            </Box>
+          </Box>
+          <Chip 
+            label={statusLabel} 
+            color={statusColor} 
+            size="small"
+          />
+        </Box>
+        
+        <Divider sx={{ my: 2 }} />
+        
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <EventIcon sx={{ mr: 1, color: 'primary.main', fontSize: 20 }} />
+              <Typography variant="body2">
+                {formattedDate}
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <AccessTimeIcon sx={{ mr: 1, color: 'primary.main', fontSize: 20 }} />
+              <Typography variant="body2">
+                {booking.time}
               </Typography>
             </Box>
           </Grid>
-          <Grid item xs={12} sm={2} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            {booking.status === 'upcoming' && (
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                <Button 
-                  variant="contained" 
-                  size="small"
-                  onClick={() => onViewDetails(booking)}
-                >
-                  View Details
-                </Button>
-                <Box sx={{ display: 'flex', gap: 1 }}>
-                  <IconButton 
-                    size="small" 
-                    color="primary"
-                    onClick={() => onReschedule(booking)}
-                    title="Reschedule"
-                  >
-                    <RescheduleIcon fontSize="small" />
-                  </IconButton>
-                  <IconButton 
-                    size="small" 
-                    color="error"
-                    onClick={() => onCancel(booking)}
-                    title="Cancel"
-                  >
-                    <CancelIcon fontSize="small" />
-                  </IconButton>
-                </Box>
-              </Box>
-            )}
-            {booking.status === 'completed' && (
-              <Button 
-                variant="outlined" 
-                size="small"
-                onClick={() => onViewDetails(booking)}
-              >
-                View Details
-              </Button>
-            )}
-            {booking.status === 'cancelled' && (
-              <Button 
-                variant="outlined" 
-                size="small"
-                onClick={() => onViewDetails(booking)}
-              >
-                View Details
-              </Button>
-            )}
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <SchoolIcon sx={{ mr: 1, color: 'primary.main', fontSize: 20 }} />
+              <Typography variant="body2">
+                Subject: {booking.subject}
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <PersonIcon sx={{ mr: 1, color: 'primary.main', fontSize: 20 }} />
+              <Typography variant="body2">
+                Price: ₹{booking.price}
+              </Typography>
+            </Box>
           </Grid>
         </Grid>
+        
+        <Divider sx={{ my: 2 }} />
+        
+        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Button 
+            variant="outlined" 
+            onClick={() => onViewDetails(booking)}
+          >
+            View Details
+          </Button>
+          <Box>
+            {booking.status === 'upcoming' && (
+              <>
+                <Button 
+                  variant="outlined" 
+                  color="error" 
+                  sx={{ mr: 1 }}
+                  onClick={() => onCancel(booking)}
+                  startIcon={<CancelIcon />}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  variant="outlined" 
+                  color="warning"
+                  onClick={() => onReschedule(booking)}
+                  startIcon={<RescheduleIcon />}
+                >
+                  Reschedule
+                </Button>
+              </>
+            )}
+          </Box>
+        </Box>
       </Box>
     </Paper>
   );
@@ -227,319 +248,260 @@ const BookingCard = ({ booking, onViewDetails, onCancel, onReschedule }) => {
 
 const MyBookings = () => {
   const navigate = useNavigate();
-  const [tabValue, setTabValue] = useState(0);
+  const theme = useTheme();
+  const [activeTab, setActiveTab] = useState(0);
+  const [selectedBooking, setSelectedBooking] = useState(null);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [rescheduleDialogOpen, setRescheduleDialogOpen] = useState(false);
-  const [selectedBooking, setSelectedBooking] = useState(null);
   const [cancelReason, setCancelReason] = useState('');
   const [rescheduleDate, setRescheduleDate] = useState('');
   const [rescheduleTime, setRescheduleTime] = useState('');
   
-  // Filter bookings based on tab
+  // Filter bookings based on active tab
   const filteredBookings = bookingsData.filter(booking => {
-    if (tabValue === 0) return true; // All bookings
-    if (tabValue === 1) return booking.status === 'upcoming';
-    if (tabValue === 2) return booking.status === 'completed';
-    if (tabValue === 3) return booking.status === 'cancelled';
-    return true;
+    if (activeTab === 0) return true; // All bookings
+    if (activeTab === 1) return booking.status === 'upcoming';
+    if (activeTab === 2) return booking.status === 'completed';
+    if (activeTab === 3) return booking.status === 'cancelled' || booking.status === 'rescheduled';
+    return false;
   });
   
   const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
+    setActiveTab(newValue);
   };
   
   const handleViewDetails = (booking) => {
     navigate(`/student/bookings/${booking.id}`);
   };
   
-  const handleCancel = (booking) => {
+  const handleCancelBooking = (booking) => {
     setSelectedBooking(booking);
     setCancelDialogOpen(true);
   };
   
-  const handleReschedule = (booking) => {
+  const handleRescheduleBooking = (booking) => {
     setSelectedBooking(booking);
     setRescheduleDialogOpen(true);
   };
   
   const handleCancelConfirm = () => {
-    // In a real application, this would send a request to the backend
-    console.log('Cancelling booking:', selectedBooking.id, 'Reason:', cancelReason);
+    // Here you would make an API call to cancel the booking
+    console.log(`Cancelling booking ${selectedBooking.id} with reason: ${cancelReason}`);
     setCancelDialogOpen(false);
     setCancelReason('');
-    // Update booking status in UI (in a real app, this would be done after API response)
-    // For now, we'll just show a success message
-    alert('Booking cancelled successfully');
+    setSelectedBooking(null);
   };
   
   const handleRescheduleConfirm = () => {
-    // In a real application, this would send a request to the backend
-    console.log('Rescheduling booking:', selectedBooking.id, 'New date:', rescheduleDate, 'New time:', rescheduleTime);
+    // Here you would make an API call to reschedule the booking
+    console.log(`Rescheduling booking ${selectedBooking.id} to ${rescheduleDate} at ${rescheduleTime}`);
     setRescheduleDialogOpen(false);
     setRescheduleDate('');
     setRescheduleTime('');
-    // Update booking in UI (in a real app, this would be done after API response)
-    // For now, we'll just show a success message
-    alert('Booking rescheduled successfully');
+    setSelectedBooking(null);
   };
   
   return (
-    <Box>
-      {/* Header Section */}
-      <Box 
-        sx={{ 
-          backgroundColor: 'primary.light',
-          backgroundImage: 'linear-gradient(135deg, #4361ee 0%, #738eef 100%)',
-          color: 'white',
-          py: 4,
-          borderRadius: 4,
-          mb: 4
-        }}
-      >
-        <Container maxWidth="lg">
-          <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold' }}>
-            My Bookings
-          </Typography>
-          <Typography variant="h6">
-            Manage your sessions with teachers
-          </Typography>
-        </Container>
-      </Box>
-      
+    <Box sx={{ py: 4 }}>
       <Container maxWidth="lg">
-        <Card elevation={2} sx={{ borderRadius: 3, mb: 4 }}>
-          <CardContent>
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-              <Tabs 
-                value={tabValue} 
-                onChange={handleTabChange} 
-                variant="scrollable"
-                scrollButtons="auto"
-                allowScrollButtonsMobile
-              >
-                <Tab label="All Bookings" />
-                <Tab label="Upcoming" />
-                <Tab label="Completed" />
-                <Tab label="Cancelled" />
-              </Tabs>
-            </Box>
-            
-            <Box sx={{ mt: 3 }}>
-              {filteredBookings.length > 0 ? (
-                filteredBookings.map((booking) => (
-                  <BookingCard 
-                    key={booking.id} 
-                    booking={booking} 
-                    onViewDetails={handleViewDetails}
-                    onCancel={handleCancel}
-                    onReschedule={handleReschedule}
-                  />
-                ))
-              ) : (
-                <Box sx={{ textAlign: 'center', py: 6 }}>
-                  <Typography variant="h6" color="text.secondary" gutterBottom>
-                    No bookings found
-                  </Typography>
+        <Box sx={{ mb: 4 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Typography variant="h4" component="h1">
+              My Bookings
+            </Typography>
+            <Button 
+              variant="contained" 
+              color="primary"
+              onClick={() => navigate('/student/find-teachers')}
+            >
+              Book New Session
+            </Button>
+          </Box>
+          <Breadcrumbs 
+            items={[
+              { label: 'Home', link: '/' },
+              { label: 'Dashboard', link: '/student/dashboard' },
+              { label: 'My Bookings', link: '/student/bookings', active: true }
+            ]}
+          />
+        </Box>
+        
+        <Box sx={{ mb: 4 }}>
+          <Tabs 
+            value={activeTab} 
+            onChange={handleTabChange}
+            variant="scrollable"
+            scrollButtons="auto"
+            sx={{ 
+              borderBottom: 1, 
+              borderColor: 'divider',
+              mb: 3
+            }}
+          >
+            <Tab label="All Bookings" />
+            <Tab label="Upcoming" />
+            <Tab label="Completed" />
+            <Tab label="Cancelled/Rescheduled" />
+          </Tabs>
+          
+          {filteredBookings.length > 0 ? (
+            filteredBookings.map(booking => (
+              <BookingCard 
+                key={booking.id}
+                booking={booking}
+                onViewDetails={handleViewDetails}
+                onCancel={handleCancelBooking}
+                onReschedule={handleRescheduleBooking}
+              />
+            ))
+          ) : (
+            <ContentCard>
+              <Box sx={{ textAlign: 'center', py: 4 }}>
+                <EventIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
+                <Typography variant="h6" gutterBottom>
+                  No bookings found
+                </Typography>
+                <Typography variant="body1" color="text.secondary" gutterBottom>
+                  You don't have any {activeTab === 0 ? '' : activeTab === 1 ? 'upcoming ' : activeTab === 2 ? 'completed ' : 'cancelled/rescheduled '}
+                  bookings at the moment.
+                </Typography>
+                {activeTab === 0 || activeTab === 1 ? (
                   <Button 
                     variant="contained" 
+                    color="primary"
                     sx={{ mt: 2 }}
-                    onClick={() => navigate('/find-teachers')}
+                    onClick={() => navigate('/student/find-teachers')}
                   >
                     Book a Session
                   </Button>
-                </Box>
-              )}
-            </Box>
-          </CardContent>
-        </Card>
+                ) : null}
+              </Box>
+            </ContentCard>
+          )}
+        </Box>
         
-        {/* Booking Stats */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card elevation={2} sx={{ borderRadius: 3, bgcolor: 'primary.light', color: 'white' }}>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Typography variant="h3" component="div">
-                  {bookingsData.filter(b => b.status === 'upcoming').length}
-                </Typography>
-                <Typography variant="body1">
-                  Upcoming Sessions
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card elevation={2} sx={{ borderRadius: 3, bgcolor: 'success.light', color: 'white' }}>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Typography variant="h3" component="div">
-                  {bookingsData.filter(b => b.status === 'completed').length}
-                </Typography>
-                <Typography variant="body1">
-                  Completed Sessions
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card elevation={2} sx={{ borderRadius: 3, bgcolor: 'error.light', color: 'white' }}>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Typography variant="h3" component="div">
-                  {bookingsData.filter(b => b.status === 'cancelled').length}
-                </Typography>
-                <Typography variant="body1">
-                  Cancelled Sessions
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card elevation={2} sx={{ borderRadius: 3, bgcolor: 'warning.light', color: 'white' }}>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Typography variant="h3" component="div">
-                  ₹{bookingsData.reduce((total, booking) => total + booking.price, 0)}
-                </Typography>
-                <Typography variant="body1">
-                  Total Spent
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-        
-        {/* Need Help Section */}
-        <Card elevation={2} sx={{ borderRadius: 3, mb: 4 }}>
-          <CardContent>
-            <Typography variant="h6" component="h2" gutterBottom>
-              Need Help?
-            </Typography>
-            <Divider sx={{ mb: 2 }} />
+        {/* Cancel Booking Dialog */}
+        <Dialog open={cancelDialogOpen} onClose={() => setCancelDialogOpen(false)}>
+          <DialogTitle>Cancel Booking</DialogTitle>
+          <DialogContent>
             <Typography variant="body1" paragraph>
-              If you need assistance with your bookings or have any questions, our support team is here to help.
+              Are you sure you want to cancel this booking?
             </Typography>
-            <Button variant="contained">Contact Support</Button>
-          </CardContent>
-        </Card>
+            {selectedBooking && (
+              <Box sx={{ mb: 3 }}>
+                <Typography variant="subtitle2" gutterBottom>
+                  Booking Details:
+                </Typography>
+                <Typography variant="body2">
+                  Subject: {selectedBooking.subject} - {selectedBooking.topic}
+                </Typography>
+                <Typography variant="body2">
+                  Teacher: {selectedBooking.teacher.name}
+                </Typography>
+                <Typography variant="body2">
+                  Date & Time: {new Date(selectedBooking.date).toLocaleDateString()} at {selectedBooking.time}
+                </Typography>
+              </Box>
+            )}
+            <TextField
+              label="Reason for cancellation"
+              multiline
+              rows={4}
+              fullWidth
+              value={cancelReason}
+              onChange={(e) => setCancelReason(e.target.value)}
+              variant="outlined"
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setCancelDialogOpen(false)}>
+              Back
+            </Button>
+            <Button 
+              onClick={handleCancelConfirm} 
+              variant="contained" 
+              color="error"
+              disabled={!cancelReason}
+            >
+              Confirm Cancellation
+            </Button>
+          </DialogActions>
+        </Dialog>
+        
+        {/* Reschedule Booking Dialog */}
+        <Dialog open={rescheduleDialogOpen} onClose={() => setRescheduleDialogOpen(false)}>
+          <DialogTitle>Reschedule Booking</DialogTitle>
+          <DialogContent>
+            <Typography variant="body1" paragraph>
+              Please select a new date and time for your booking.
+            </Typography>
+            {selectedBooking && (
+              <Box sx={{ mb: 3 }}>
+                <Typography variant="subtitle2" gutterBottom>
+                  Current Booking Details:
+                </Typography>
+                <Typography variant="body2">
+                  Subject: {selectedBooking.subject} - {selectedBooking.topic}
+                </Typography>
+                <Typography variant="body2">
+                  Teacher: {selectedBooking.teacher.name}
+                </Typography>
+                <Typography variant="body2">
+                  Date & Time: {new Date(selectedBooking.date).toLocaleDateString()} at {selectedBooking.time}
+                </Typography>
+              </Box>
+            )}
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="New Date"
+                  type="date"
+                  fullWidth
+                  value={rescheduleDate}
+                  onChange={(e) => setRescheduleDate(e.target.value)}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  variant="outlined"
+                  sx={{ mb: 2 }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="New Time"
+                  select
+                  fullWidth
+                  value={rescheduleTime}
+                  onChange={(e) => setRescheduleTime(e.target.value)}
+                  variant="outlined"
+                >
+                  <MenuItem value="9:00 AM - 10:00 AM">9:00 AM - 10:00 AM</MenuItem>
+                  <MenuItem value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</MenuItem>
+                  <MenuItem value="11:00 AM - 12:00 PM">11:00 AM - 12:00 PM</MenuItem>
+                  <MenuItem value="1:00 PM - 2:00 PM">1:00 PM - 2:00 PM</MenuItem>
+                  <MenuItem value="2:00 PM - 3:00 PM">2:00 PM - 3:00 PM</MenuItem>
+                  <MenuItem value="3:00 PM - 4:00 PM">3:00 PM - 4:00 PM</MenuItem>
+                  <MenuItem value="4:00 PM - 5:00 PM">4:00 PM - 5:00 PM</MenuItem>
+                  <MenuItem value="5:00 PM - 6:00 PM">5:00 PM - 6:00 PM</MenuItem>
+                </TextField>
+              </Grid>
+            </Grid>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setRescheduleDialogOpen(false)}>
+              Back
+            </Button>
+            <Button 
+              onClick={handleRescheduleConfirm} 
+              variant="contained" 
+              color="primary"
+              disabled={!rescheduleDate || !rescheduleTime}
+            >
+              Confirm Reschedule
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Container>
-      
-      {/* Cancel Dialog */}
-      <Dialog open={cancelDialogOpen} onClose={() => setCancelDialogOpen(false)}>
-        <DialogTitle>Cancel Booking</DialogTitle>
-        <DialogContent>
-          <Typography variant="body1" paragraph>
-            Are you sure you want to cancel this booking?
-          </Typography>
-          {selectedBooking && (
-            <Box sx={{ mb: 3 }}>
-              <Typography variant="subtitle1">
-                {selectedBooking.subject}: {selectedBooking.topic}
-              </Typography>
-              <Typography variant="body2">
-                {new Date(selectedBooking.date).toLocaleDateString()} | {selectedBooking.time}
-              </Typography>
-              <Typography variant="body2">
-                Teacher: {selectedBooking.teacher.name}
-              </Typography>
-            </Box>
-          )}
-          <TextField
-            label="Reason for cancellation"
-            multiline
-            rows={3}
-            fullWidth
-            value={cancelReason}
-            onChange={(e) => setCancelReason(e.target.value)}
-            placeholder="Please provide a reason for cancellation"
-          />
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
-            Note: Cancellations made less than 4 hours before the scheduled time may incur a cancellation fee.
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setCancelDialogOpen(false)}>
-            Back
-          </Button>
-          <Button 
-            onClick={handleCancelConfirm} 
-            color="error" 
-            variant="contained"
-            disabled={!cancelReason}
-          >
-            Confirm Cancellation
-          </Button>
-        </DialogActions>
-      </Dialog>
-      
-      {/* Reschedule Dialog */}
-      <Dialog open={rescheduleDialogOpen} onClose={() => setRescheduleDialogOpen(false)}>
-        <DialogTitle>Reschedule Booking</DialogTitle>
-        <DialogContent>
-          <Typography variant="body1" paragraph>
-            Please select a new date and time for your session.
-          </Typography>
-          {selectedBooking && (
-            <Box sx={{ mb: 3 }}>
-              <Typography variant="subtitle1">
-                {selectedBooking.subject}: {selectedBooking.topic}
-              </Typography>
-              <Typography variant="body2">
-                Current: {new Date(selectedBooking.date).toLocaleDateString()} | {selectedBooking.time}
-              </Typography>
-              <Typography variant="body2">
-                Teacher: {selectedBooking.teacher.name}
-              </Typography>
-            </Box>
-          )}
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                label="New Date"
-                type="date"
-                fullWidth
-                value={rescheduleDate}
-                onChange={(e) => setRescheduleDate(e.target.value)}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                sx={{ mb: 2 }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                select
-                label="New Time Slot"
-                fullWidth
-                value={rescheduleTime}
-                onChange={(e) => setRescheduleTime(e.target.value)}
-              >
-                <MenuItem value="9:00 AM - 10:00 AM">9:00 AM - 10:00 AM</MenuItem>
-                <MenuItem value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</MenuItem>
-                <MenuItem value="11:00 AM - 12:00 PM">11:00 AM - 12:00 PM</MenuItem>
-                <MenuItem value="12:00 PM - 1:00 PM">12:00 PM - 1:00 PM</MenuItem>
-                <MenuItem value="2:00 PM - 3:00 PM">2:00 PM - 3:00 PM</MenuItem>
-                <MenuItem value="3:00 PM - 4:00 PM">3:00 PM - 4:00 PM</MenuItem>
-                <MenuItem value="4:00 PM - 5:00 PM">4:00 PM - 5:00 PM</MenuItem>
-                <MenuItem value="5:00 PM - 6:00 PM">5:00 PM - 6:00 PM</MenuItem>
-                <MenuItem value="6:00 PM - 7:00 PM">6:00 PM - 7:00 PM</MenuItem>
-              </TextField>
-            </Grid>
-          </Grid>
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 2 }}>
-            Note: Rescheduling is subject to teacher availability. You will receive a confirmation once the teacher accepts the new time.
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setRescheduleDialogOpen(false)}>
-            Back
-          </Button>
-          <Button 
-            onClick={handleRescheduleConfirm} 
-            color="primary" 
-            variant="contained"
-            disabled={!rescheduleDate || !rescheduleTime}
-          >
-            Confirm Reschedule
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   );
 };

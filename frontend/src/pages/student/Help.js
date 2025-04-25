@@ -256,7 +256,7 @@ const StudentHelp = () => {
                         </ListItemIcon>
                         <ListItemText 
                           primary="Email" 
-                          secondary="support@padholikho.com" 
+                          secondary="a0krsharma@gmail.com" 
                         />
                       </ListItem>
                       <Divider component="li" />
@@ -266,7 +266,7 @@ const StudentHelp = () => {
                         </ListItemIcon>
                         <ListItemText 
                           primary="Phone" 
-                          secondary="+91 9876543210" 
+                          secondary="+91 7070253050" 
                         />
                       </ListItem>
                       <Divider component="li" />
