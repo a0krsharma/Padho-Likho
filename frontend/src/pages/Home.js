@@ -327,7 +327,9 @@ const Home = () => {
               Start your child’s journey to academic excellence! Simply fill out the form below to book your free trial class.
             </Typography>
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-              <form name="contact" method="POST" data-netlify="true" style={{ width: '100%', maxWidth: 400 }}>
+              <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" style={{ width: '100%', maxWidth: 400 }}>
+  <input type="hidden" name="form-name" value="contact" />
+  <input type="hidden" name="bot-field" />
                 <input type="hidden" name="form-name" value="contact" />
                 <p>
                   <label>Name <input type="text" name="name" required style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc', marginTop: 4 }} /></label>
@@ -364,12 +366,13 @@ const Home = () => {
                       <option value="">Select Language</option>
                       <option value="English">English</option>
                       <option value="Hindi">Hindi</option>
+                      <option value="Hinglish">Hinglish</option>
                       <option value="Other">Other</option>
                     </select>
                   </label>
                 </p>
                 <p>
-                  <button type="submit" style={{ padding: '10px 24px', borderRadius: 4, background: '#4361ee', color: 'white', border: 'none', fontWeight: 'bold', fontSize: 16, cursor: 'pointer' }}>Send</button>
+                  <button type="submit" style={{ padding: '10px 24px', borderRadius: 4, background: '#4361ee', color: 'white', border: 'none', fontWeight: 'bold', fontSize: 16, cursor: 'pointer' }}>Book</button>
                 </p>
               </form>
             </Box>
