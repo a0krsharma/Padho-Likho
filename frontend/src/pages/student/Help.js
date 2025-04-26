@@ -10,7 +10,6 @@ import {
   VideoCall as VideoCallIcon,
   Search as SearchIcon
 } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
 
 const StudentHelp = () => {
   const navigate = useNavigate();
