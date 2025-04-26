@@ -2,18 +2,15 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
   Box,
   Paper,
+  Menu,
   IconButton,
   Tooltip,
   Divider,
-  Menu,
-  MenuItem,
   Slider,
   Typography,
-  useTheme
 } from '@mui/material';
 import {
   Brush as BrushIcon,
-  FormatColorFill as ColorFillIcon,
   Create as PencilIcon,
   Clear as EraserIcon,
   Delete as ClearIcon,
@@ -22,7 +19,6 @@ import {
   Save as SaveIcon,
   TextFields as TextIcon,
   PanTool as HandIcon,
-  Image as ImageIcon,
   Add as ZoomInIcon,
   Remove as ZoomOutIcon
 } from '@mui/icons-material';
@@ -44,7 +40,7 @@ const Whiteboard = ({
   collaborative = false,
   sx = {}
 }) => {
-  const theme = useTheme();
+
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -93,7 +89,7 @@ const Whiteboard = ({
     
     // Save initial state to history
     saveToHistory();
-  }, []);
+  }, [brushSize, color, initialData]);
   
   // Handle window resize
   useEffect(() => {
@@ -128,7 +124,7 @@ const Whiteboard = ({
     
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [brushSize, color]);
   
   // Save canvas state to history
   const saveToHistory = () => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Button, Paper } from '@mui/material';
+import { Paper, Typography, Button } from '@mui/material';
 import { Error as ErrorIcon, Refresh as RefreshIcon } from '@mui/icons-material';
 
 const ErrorDisplay = ({ 

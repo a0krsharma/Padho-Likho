@@ -44,8 +44,9 @@ const Chat = ({
   typing = false,
   sx = {}
 }) => {
+
   const theme = useTheme();
-  const [messageText, setMessageText] = useState('');
+const [messageText, setMessageText] = useState('');
   const [attachments, setAttachments] = useState([]);
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);

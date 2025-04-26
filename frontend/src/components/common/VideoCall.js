@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
+
 import {
   Box,
   Paper,
@@ -25,7 +26,6 @@ import {
  * A reusable video call component for online classes
  * 
  * @param {Object} props - Component props
- * @param {string} props.roomId - Room ID for the call
  * @param {Object} props.localUser - Local user information
  * @param {Array} props.remoteUsers - Array of remote users
  * @param {function} props.onJoin - Callback when joining call
@@ -37,7 +37,6 @@ import {
  * @param {Object} props.sx - Additional styles to apply
  */
 const VideoCall = ({
-  roomId,
   localUser = { name: 'You', audio: true, video: true },
   remoteUsers = [],
   onJoin,
@@ -48,6 +47,7 @@ const VideoCall = ({
   onToggleChat,
   sx = {}
 }) => {
+
   const theme = useTheme();
   const [isJoined, setIsJoined] = useState(false);
   const [audioEnabled, setAudioEnabled] = useState(localUser.audio);

@@ -18,12 +18,11 @@ import {
   TextField,
   InputAdornment,
   Chip,
-  alpha,
-  useTheme
+  alpha
 } from '@mui/material';
 import {
   Search as SearchIcon,
-  FilterList as FilterListIcon,
+
   Delete as DeleteIcon,
   Edit as EditIcon,
   Visibility as VisibilityIcon
@@ -56,7 +55,6 @@ const DataTable = ({
   loading = false,
   sx = {}
 }) => {
-  const theme = useTheme();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [orderBy, setOrderBy] = useState('');

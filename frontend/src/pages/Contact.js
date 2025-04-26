@@ -22,7 +22,6 @@ import {
 
 const Contact = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   
   const [formData, setFormData] = useState({
     name: '',

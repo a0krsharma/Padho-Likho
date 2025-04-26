@@ -11,7 +11,6 @@ import {
   Button
 } from '@mui/material';
 import {
-  Person as PersonIcon,
   Email as EmailIcon,
   Phone as PhoneIcon,
   School as SchoolIcon,

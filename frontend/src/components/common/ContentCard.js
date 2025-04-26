@@ -7,8 +7,7 @@ import {
   Typography, 
   IconButton, 
   Box,
-  Divider,
-  useTheme
+  Divider
 } from '@mui/material';
 import { MoreVert as MoreVertIcon } from '@mui/icons-material';
 
@@ -35,7 +34,6 @@ const ContentCard = ({
   onMoreClick,
   sx = {}
 }) => {
-  const theme = useTheme();
 
   return (
     <Card 

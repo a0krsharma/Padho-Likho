@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Box, 
   Container, 
@@ -30,8 +30,6 @@ import {
 } from '@mui/material';
 import { 
   ArrowBack as ArrowBackIcon,
-  CalendarToday as CalendarTodayIcon,
-  AccessTime as AccessTimeIcon,
   School as SchoolIcon,
   Subject as SubjectIcon,
   Check as CheckIcon,
@@ -92,7 +90,6 @@ const teachersData = [
 
 const BookTeacher = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
   const { id } = useParams();
   

@@ -22,17 +22,16 @@ import {
 } from '@mui/material';
 import {
   Menu as MenuIcon,
-  Home as HomeIcon,
-  School as SchoolIcon,
   Person as PersonIcon,
   Info as InfoIcon,
   ContactSupport as ContactIcon,
   Dashboard as DashboardIcon,
   Logout as LogoutIcon,
   Login as LoginIcon,
-  PersonAdd as RegisterIcon,
-  PersonAdd as PersonAddIcon,
-  Help as HelpIcon
+  Help as HelpIcon,
+  Home as HomeIcon,
+  School as SchoolIcon,
+  HowToReg as RegisterIcon
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
 import Footer from '../common/Footer';
@@ -58,19 +57,14 @@ const MainLayout = () => {
     setAnchorEl(null);
   };
   
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
 
   const handleLogout = () => {
     logout();
     handleProfileMenuClose();
-    setSnackbarOpen(true);
     navigate('/');
   };
 
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') return;
-    setSnackbarOpen(false);
-  };
   
   const handleNavigate = (path) => {
     navigate(path);

@@ -5,23 +5,13 @@ import {
   TextField,
   Typography,
   Grid,
-  Chip,
-  MenuItem,
-  InputLabel,
-  Select,
-  FormControl
+  Chip
 } from '@mui/material';
 
 /**
  * ProfileEditForm component
  * Allows editing of user profile details
  */
-const roleOptions = [
-  { value: 'student', label: 'Student' },
-  { value: 'teacher', label: 'Teacher' },
-  { value: 'parent', label: 'Parent' }
-];
-
 const ProfileEditForm = ({ user, onSave, onCancel, loading }) => {
   const [form, setForm] = useState({ ...user });
   const [subjectInput, setSubjectInput] = useState('');

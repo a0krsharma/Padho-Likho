@@ -8,28 +8,27 @@ import {
   CardContent, 
   Button, 
   Avatar,
-  Divider,
+  
   Tabs,
   Tab,
   Paper,
-  Chip,
+  
   IconButton,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   TextField,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Select,
+  
+  
+  
+  
   useTheme
 } from '@mui/material';
 import { 
   Event as EventIcon,
   AccessTime as AccessTimeIcon,
   Person as PersonIcon,
-  School as SchoolIcon,
   VideoCall as VideoCallIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,

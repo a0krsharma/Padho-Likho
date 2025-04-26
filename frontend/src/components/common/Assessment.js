@@ -55,12 +55,22 @@ const Assessment = ({
   result = null,
   sx = {}
 }) => {
-  const theme = useTheme();
   const [activeStep, setActiveStep] = useState(0);
   const [answers, setAnswers] = useState({});
   const [timeRemaining, setTimeRemaining] = useState(assessment.timeLimit * 60 || 0);
   const [timer, setTimer] = useState(null);
   
+  // Handle assessment submit
+  const handleSubmit = React.useCallback(() => {
+    if (timer) {
+      clearInterval(timer);
+      setTimer(null);
+    }
+    if (onSubmit) {
+      onSubmit(answers);
+    }
+  }, [timer, onSubmit, answers]);
+
   // Start timer when assessment is loaded
   React.useEffect(() => {
     if (!editable && assessment.timeLimit && !timer && !submitted) {
@@ -74,13 +84,11 @@ const Assessment = ({
           return prev - 1;
         });
       }, 1000);
-      
       setTimer(newTimer);
-      
       return () => clearInterval(newTimer);
     }
   }, [assessment, editable, submitted, handleSubmit, timer]);
-  
+
   // Format time remaining
   const formatTimeRemaining = () => {
     const minutes = Math.floor(timeRemaining / 60);
@@ -104,17 +112,7 @@ const Assessment = ({
     setAnswers(newAnswers);
   };
   
-  // Handle assessment submit
-  const handleSubmit = () => {
-    if (timer) {
-      clearInterval(timer);
-      setTimer(null);
-    }
-    
-    if (onSubmit) {
-      onSubmit(answers);
-    }
-  };
+
   
   // Handle assessment change in edit mode
   const handleAssessmentChange = (field, value) => {
