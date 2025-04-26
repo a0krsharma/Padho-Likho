@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { useTheme, useMediaQuery } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useTheme } from '@mui/material';
 import { 
   Box, 
   Container, 
@@ -21,8 +20,7 @@ import {
   Slider,
   Rating,
   InputAdornment,
-  Pagination,
-  useMediaQuery
+  Pagination
 } from '@mui/material';
 import { 
   Search as SearchIcon,
@@ -33,7 +31,6 @@ import {
   Verified as VerifiedIcon,
   Sort as SortIcon
 } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
 
 // Sample teacher data
 const teachersData = [
