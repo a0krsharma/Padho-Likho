@@ -19,7 +19,7 @@ import {
   Image as ImageIcon,
   PictureAsPdf as PdfIcon
 } from '@mui/icons-material';
-import User from './User';
+import UserAvatar from './UserAvatar';
 
 /**
  * A reusable chat component
@@ -163,7 +163,7 @@ const Chat = ({
           borderColor: 'divider'
         }}
       >
-        <User 
+        <UserAvatar 
           name={recipient.name} 
           src={recipient.avatar} 
           role={recipient.role}
@@ -244,7 +244,7 @@ const Chat = ({
                     }}
                   >
                     {!isCurrentUser && (
-                      <User 
+                      <UserAvatar 
                         name={message.senderName || recipient.name} 
                         src={message.senderAvatar || recipient.avatar} 
                         role={recipient.role}
@@ -334,7 +334,7 @@ const Chat = ({
               mb: 1.5
             }}
           >
-            <User 
+            <UserAvatar 
               name={recipient.name} 
               src={recipient.avatar} 
               role={recipient.role}
