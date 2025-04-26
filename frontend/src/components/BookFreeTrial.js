@@ -41,7 +41,8 @@ const BookFreeTrial = () => {
       <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
         Contact us at <Link href="tel:7070253050" underline="hover" color="primary"><PhoneIcon sx={{ verticalAlign: 'middle', mr: 1 }} />7070253050</Link> or fill the form below to book a free trial class for your child.
       </Typography>
-      <Box component="form" onSubmit={handleSubmit}>
+      <Box component="form" onSubmit={handleSubmit} name="book-free-trial" method="POST" data-netlify="true">
+  <input type="hidden" name="form-name" value="book-free-trial" />
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <TextField label="Parent's Name" name="parentName" value={form.parentName} onChange={handleChange} fullWidth required />
