@@ -9,9 +9,7 @@ import {
   Paper,
   Divider,
   Snackbar,
-  Alert,
-  useTheme,
-  useMediaQuery
+  Alert
 } from '@mui/material';
 import { 
   Email as EmailIcon, 
@@ -21,7 +19,7 @@ import {
 } from '@mui/icons-material';
 
 const Contact = () => {
-  const theme = useTheme();
+  // const theme = useTheme();
   
   const [formData, setFormData] = useState({
     name: '',

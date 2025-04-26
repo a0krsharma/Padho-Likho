@@ -7,21 +7,17 @@ import {
   Grid, 
   Card, 
   CardContent, 
-  CardMedia, 
+
   Avatar, 
   Paper, 
-  Divider,
-  useTheme,
-  useMediaQuery,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
+
+
+
+
+
+
   Tabs,
   Tab,
-  Snackbar,
-  Alert,
   Chip
 } from '@mui/material';
 import { 
@@ -29,26 +25,18 @@ import {
   Search as SearchIcon, 
   VideoCall as VideoCallIcon, 
   Assignment as AssignmentIcon, 
-  Star as StarIcon,
+
   Group as GroupIcon,
   Payments as PaymentsIcon,
   Celebration as CelebrationIcon,
-  Calculate as CalculateIcon,
-  Science as ScienceIcon,
-  Language as LanguageIcon,
-  Book as BookIcon,
-  History as HistoryIcon,
-  Computer as ComputerIcon,
-  CalendarToday as CalendarTodayIcon,
   Dashboard as DashboardIcon,
   Help as HelpIcon,
   Class as ClassIcon,
   Verified as VerifiedIcon,
   ArrowForward as ArrowForwardIcon,
-  Person as PersonIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import BookFreeTrial from '../components/BookFreeTrial';
+
 
 
 // Feature card component
@@ -178,50 +166,8 @@ const PricingCard = ({ title, price, description, features, recommended }) => {
   );
 };
 
-// Subject card component
-const SubjectCard = ({ icon, title, color, onClick }) => (
-  <Paper 
-    elevation={4} 
-    sx={{ 
-      p: { xs: 2, md: 3 }, 
-      borderRadius: 4, 
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      textAlign: 'center',
-      cursor: 'pointer',
-      boxShadow: '0 6px 18px 0 rgba(67,97,238,0.10)',
-      transition: 'transform 0.3s, box-shadow 0.3s',
-      '&:hover': { 
-        transform: 'translateY(-8px) scale(1.03)',
-        boxShadow: '0 16px 40px 0 rgba(67,97,238,0.18)'
-      }
-    }}
-    onClick={onClick}
-  >
-    <Box sx={{ 
-      color: 'white', 
-      bgcolor: color, 
-      p: 2, 
-      borderRadius: '50%', 
-      mb: 1,
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center'
-    }}>
-      {icon}
-    </Box>
-    <Typography variant="subtitle1" sx={{ fontWeight: 'medium' }}>
-      {title}
-    </Typography>
-  </Paper>
-);
-
 const Home = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
   
   // State for quick booking widget
@@ -229,10 +175,6 @@ const Home = () => {
   const [bookingSubject, setBookingSubject] = useState('');
   const [bookingDate, setBookingDate] = useState('');
   const [bookingTime, setBookingTime] = useState('');
-  const [showBookingSuccess, setShowBookingSuccess] = useState(false);
-  
-  // State for subject tabs
-  const [subjectTabValue, setSubjectTabValue] = useState(0);
   
   // State for pricing plan selection
   const [selectedPlan, setSelectedPlan] = useState(1);
@@ -244,26 +186,6 @@ const Home = () => {
     setDashboardTabValue(newValue);
   };
   
-  const handleSubjectTabChange = (event, newValue) => {
-    setSubjectTabValue(newValue);
-  };
-  
-  const handleQuickBooking = (e) => {
-    e.preventDefault();
-    // In a real application, this would submit the booking data to the backend
-    console.log('Booking data:', { bookingClass, bookingSubject, bookingDate, bookingTime });
-    setShowBookingSuccess(true);
-    // Reset form
-    setBookingClass('');
-    setBookingSubject('');
-    setBookingDate('');
-    setBookingTime('');
-  };
-  
-  const handleCloseSnackbar = () => {
-    setShowBookingSuccess(false);
-  };
-
   return (
     <Box>
       {/* Hero Section */}

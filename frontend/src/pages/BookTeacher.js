@@ -25,8 +25,8 @@ import {
   DialogActions,
   Alert,
   Snackbar,
-  useTheme,
-  useMediaQuery
+  useNavigate, 
+  useParams 
 } from '@mui/material';
 import { 
   ArrowBack as ArrowBackIcon,
@@ -89,7 +89,7 @@ const teachersData = [
 ];
 
 const BookTeacher = () => {
-  const theme = useTheme();
+  // const theme = useTheme();
   const navigate = useNavigate();
   const { id } = useParams();
   

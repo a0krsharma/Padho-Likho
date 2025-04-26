@@ -1,38 +1,7 @@
-import React, { useState } from 'react';
-import { 
-  Box, 
-  Container, 
-  Typography, 
-  Grid, 
-  Card, 
-  CardContent, 
-  Button, 
-  Divider,
-  Tabs,
-  Tab,
-  Paper,
-  Chip,
-  LinearProgress,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  CircularProgress,
-  useTheme
-} from '@mui/material';
-import { 
-  Assignment as AssignmentIcon,
-  CheckCircle as CheckCircleIcon,
-  Pending as PendingIcon,
-  Timer as TimerIcon,
-  CalendarToday as CalendarTodayIcon,
-  ArrowForward as ArrowForwardIcon,
-  School as SchoolIcon,
-  Grade as GradeIcon,
-  TrendingUp as TrendingUpIcon,
-  BarChart as BarChartIcon
-} from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Box, Container, Typography, Grid, Card, CardContent, Button, Divider, Tabs, Tab, Paper, Chip, LinearProgress, List, ListItem, ListItemText, ListItemIcon, CircularProgress } from '@mui/material';
+import { Assignment as AssignmentIcon, CheckCircle as CheckCircleIcon, Pending as PendingIcon, Timer as TimerIcon, CalendarToday as CalendarTodayIcon, ArrowForward as ArrowForwardIcon, School as SchoolIcon, Grade as GradeIcon, TrendingUp as TrendingUpIcon, BarChart as BarChartIcon } from '@mui/icons-material';
+
 
 // Sample assessments data
 const assessmentsData = [

@@ -108,7 +108,7 @@ export function AuthProvider({ children }) {
   // Logout function
   const logout = React.useCallback(() => {
     clearAuth();
-  }, [clearAuth]);
+  }, []);
 
   // Check user function
   // Robustly check user using token (mock or real backend)
@@ -161,7 +161,7 @@ export function AuthProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  }, [clearAuth]);
+  }, []);
 
   // Effect to check for token on mount
   React.useEffect(() => {
@@ -425,7 +425,7 @@ export function AuthProvider({ children }) {
     logout,
     register,
     getCurrentUser,
-  }), [currentUser, loading, error, login, logout, register, getCurrentUser]);
+  }), [currentUser, loading, error, logout, getCurrentUser]);
 
   // Return provider
   return (

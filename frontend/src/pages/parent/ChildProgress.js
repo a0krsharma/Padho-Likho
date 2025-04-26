@@ -1,49 +1,6 @@
-import React, { useState } from 'react';
-import { 
-  Box, 
-  Container, 
-  Typography, 
-  Grid, 
-  Card, 
-  CardContent, 
-  Button, 
-  Avatar,
-  Divider,
-  Tabs,
-  Tab,
-  Paper,
-  Chip,
-  LinearProgress,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  CircularProgress,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  useTheme
-} from '@mui/material';
-import { 
-  Assignment as AssignmentIcon,
-  CheckCircle as CheckCircleIcon,
-  Pending as PendingIcon,
-  Timer as TimerIcon,
-  TrendingUp as TrendingUpIcon,
-  School as SchoolIcon,
-  Grade as GradeIcon,
-  BarChart as BarChartIcon,
-  ArrowUpward as ArrowUpwardIcon,
-  ArrowDownward as ArrowDownwardIcon,
-  Remove as RemoveIcon,
-  CalendarMonth as CalendarMonthIcon,
-  Person as PersonIcon,
-  ArrowBack as ArrowBackIcon
-} from '@mui/icons-material';
-import { useNavigate, useParams } from 'react-router-dom';
+import React from 'react';
+import { Box, Container, Typography, Grid, Card, CardContent, Button, Avatar, Divider, Tabs, Tab, Paper, Chip, LinearProgress, List, ListItem, ListItemText, ListItemIcon, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Assignment as AssignmentIcon, CheckCircle as CheckCircleIcon, Pending as PendingIcon, Timer as TimerIcon, TrendingUp as TrendingUpIcon, School as SchoolIcon, Grade as GradeIcon, BarChart as BarChartIcon, ArrowUpward as ArrowUpwardIcon, ArrowDownward as ArrowDownwardIcon, Remove as RemoveIcon, CalendarMonth as CalendarMonthIcon, Person as PersonIcon, ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 
 // Sample data for child
 const childData = {

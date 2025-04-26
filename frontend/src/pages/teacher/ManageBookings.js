@@ -8,12 +8,10 @@ import {
   CardContent, 
   Button, 
   Avatar,
-  Divider,
   Tabs,
   Tab,
   Paper,
-  Chip,
-  IconButton,
+
   Dialog,
   DialogTitle,
   DialogContent,
@@ -29,7 +27,7 @@ import {
   Event as EventIcon,
   AccessTime as AccessTimeIcon,
   Person as PersonIcon,
-  School as SchoolIcon,
+
   Check as CheckIcon,
   Close as CloseIcon,
   ArrowBack as ArrowBackIcon,

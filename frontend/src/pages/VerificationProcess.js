@@ -75,12 +75,12 @@ const VerificationProcess = () => {
           </Stepper>
 
           <List>
-            {processDetails.map((step, idx) => (
-              <ListItem key={idx} alignItems="flex-start">
-                <ListItemIcon>{step.icon}</ListItemIcon>
+            {processDetails.map((item, _) => (
+              <ListItem key={item.title} alignItems="flex-start">
+                <ListItemIcon>{item.icon}</ListItemIcon>
                 <ListItemText
-                  primary={<Typography variant="h6" sx={{ fontWeight: 'bold' }}>{step.title}</Typography>}
-                  secondary={step.description}
+                  primary={<Typography variant="h6" sx={{ fontWeight: 'bold' }}>{item.title}</Typography>}
+                  secondary={item.description}
                 />
               </ListItem>
             ))}

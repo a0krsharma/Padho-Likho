@@ -1,49 +1,16 @@
-import React, { useState } from 'react';
-import { 
-  Box, 
-  Container, 
-  Typography, 
-  Grid, 
-  Button, 
-  Avatar,
-  Divider,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemAvatar,
-  LinearProgress,
-  Paper,
-  Chip,
-  Tabs,
-  Tab,
-  IconButton,
-  useTheme
-} from '@mui/material';
-import { 
-  School as SchoolIcon,
-  Person as PersonIcon,
-  Event as EventIcon,
-  Assignment as AssignmentIcon,
-  TrendingUp as TrendingUpIcon,
-  CalendarToday as CalendarTodayIcon,
-  ArrowForward as ArrowForwardIcon,
-  AccessTime as AccessTimeIcon,
-  CheckCircle as CheckCircleIcon,
-  Grade as GradeIcon,
-  Add as AddIcon,
-  Message as MessageIcon
-} from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Box, Container, Typography, Grid, Button, Avatar, Divider, List, ListItem, ListItemText, ListItemAvatar, LinearProgress, Paper, Chip, Tabs, Tab, IconButton } from '@mui/material';
+import { School as SchoolIcon, Person as PersonIcon, Event as EventIcon, Assignment as AssignmentIcon, TrendingUp as TrendingUpIcon, CalendarToday as CalendarTodayIcon, ArrowForward as ArrowForwardIcon, AccessTime as AccessTimeIcon, CheckCircle as CheckCircleIcon, Grade as GradeIcon, Add as AddIcon, Message as MessageIcon } from '@mui/icons-material';
 
 // Import custom components
-import ContentCard from '../../components/common/ContentCard';
-import StatCard from '../../components/common/StatCard';
-import Calendar from '../../components/common/Calendar';
-import NotificationBell from '../../components/common/NotificationBell';
-import UserAvatar from '../../components/common/UserAvatar';
-import DataTable from '../../components/common/DataTable';
-import Breadcrumbs from '../../components/common/Breadcrumbs';
-import ProgressTracker from '../../components/common/ProgressTracker';
+// import ContentCard from '../../components/common/ContentCard';
+// import StatCard from '../../components/common/StatCard';
+// import Calendar from '../../components/common/Calendar';
+// import NotificationBell from '../../components/common/NotificationBell';
+// import UserAvatar from '../../components/common/UserAvatar';
+// import DataTable from '../../components/common/DataTable';
+// import Breadcrumbs from '../../components/common/Breadcrumbs';
+// import ProgressTracker from '../../components/common/ProgressTracker';
 
 // Sample data
 const childrenData = [

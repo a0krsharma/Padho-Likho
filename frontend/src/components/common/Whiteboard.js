@@ -79,17 +79,18 @@ const Whiteboard = ({
     contextRef.current = context;
     
     // Load initial data if provided
-    if (initialData) {
-      const img = new Image();
+    if (initialData && context) {
+      const img = new window.Image();
       img.onload = () => {
-        context.drawImage(img, 0, 0);
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(img, 0, 0, canvas.width / 2, canvas.height / 2);
       };
       img.src = initialData;
     }
-    
-    // Save initial state to history
+    // Save to history after initialization
     saveToHistory();
-  }, [brushSize, color, initialData]);
+    // eslint-disable-next-line
+  }, [color, brushSize, initialData, saveToHistory]);
   
   // Handle window resize
   useEffect(() => {

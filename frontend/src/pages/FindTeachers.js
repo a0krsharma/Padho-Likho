@@ -19,21 +19,17 @@ import {
   Slider,
   Rating,
   InputAdornment,
-  IconButton,
   Pagination,
-  useTheme,
   useMediaQuery
 } from '@mui/material';
 import { 
   Search as SearchIcon,
   FilterList as FilterListIcon,
-  Star as StarIcon,
   School as SchoolIcon,
   AccessTime as AccessTimeIcon,
   Language as LanguageIcon,
   Verified as VerifiedIcon,
-  Sort as SortIcon,
-  KeyboardArrowDown as KeyboardArrowDownIcon
+  Sort as SortIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -133,7 +129,7 @@ const teachersData = [
 
 // Teacher card component
 const TeacherCard = ({ teacher, onBookNow }) => {
-  const theme = useTheme();
+  // const theme = useTheme();
   const navigate = useNavigate();
   
   return (
@@ -271,7 +267,7 @@ const TeacherCard = ({ teacher, onBookNow }) => {
 };
 
 const FindTeachers = () => {
-  const theme = useTheme();
+  // const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
   

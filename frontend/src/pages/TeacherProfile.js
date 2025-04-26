@@ -26,7 +26,6 @@ import {
   AccessTime as AccessTimeIcon,
   Language as LanguageIcon,
   Verified as VerifiedIcon,
-  Star as StarIcon,
   EventAvailable as EventAvailableIcon,
   CheckCircle as CheckCircleIcon,
   Person as PersonIcon,
