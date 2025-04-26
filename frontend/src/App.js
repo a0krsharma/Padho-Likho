@@ -38,6 +38,13 @@ import { AuthProvider } from './context/AuthContext';
 
 
 
+// Simple placeholder component for not-yet-implemented pages
+const PlaceholderComponent = ({ title }) => (
+  <Box sx={{ p: 5, textAlign: 'center' }}>
+    <Typography variant="h4" color="text.secondary">{title} (Coming Soon)</Typography>
+  </Box>
+);
+
 // Student pages placeholders (only for pages not yet implemented)
 const MyBookings = () => <PlaceholderComponent title="My Bookings" />;
 const MyClasses = () => <PlaceholderComponent title="My Classes" />;
