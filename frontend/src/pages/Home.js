@@ -85,7 +85,7 @@ const TestimonialCard = ({ name, role, image, testimonial }) => (
 
 // Pricing card component
 const PricingCard = ({ title, price, description, features, recommended }) => {
-  const theme = useTheme();
+  
   const navigate = useNavigate();
   
   return (
@@ -199,7 +199,7 @@ const SubjectCard = ({ icon, title, color, onClick }) => (
 );
 
 const Home = () => {
-  const theme = useTheme();
+  
   const navigate = useNavigate();
   
   // State for quick booking widget
