@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useTheme, useMediaQuery } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { 
   Box, 
   Container, 
@@ -267,7 +269,7 @@ const TeacherCard = ({ teacher, onBookNow }) => {
 };
 
 const FindTeachers = () => {
-  // const theme = useTheme();
+  const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
   

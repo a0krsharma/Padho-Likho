@@ -25,7 +25,7 @@ import {
   Search as SearchIcon, 
   VideoCall as VideoCallIcon, 
   Assignment as AssignmentIcon, 
-
+  Star as StarIcon,
   Group as GroupIcon,
   Payments as PaymentsIcon,
   Celebration as CelebrationIcon,
