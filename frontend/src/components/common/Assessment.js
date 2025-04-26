@@ -59,6 +59,7 @@ const Assessment = ({
   const [answers, setAnswers] = useState({});
   const [timeRemaining, setTimeRemaining] = useState(assessment.timeLimit * 60 || 0);
   const [timer, setTimer] = useState(null);
+  const theme = useTheme();
   
   // Handle assessment submit
   const handleSubmit = React.useCallback(() => {
@@ -550,14 +551,14 @@ const Assessment = ({
               mt: 4, 
               p: 3, 
               borderRadius: 2,
-              backgroundColor: theme.palette.success.light
+              backgroundColor: theme ? theme.palette.success.light : '#e8f5e9'
             }}
           >
             <Typography variant="h5" gutterBottom>
               Assessment Results
             </Typography>
             
-            <Typography variant="h4" sx={{ fontWeight: 'bold', color: theme.palette.success.dark }}>
+            <Typography variant="h4" sx={{ fontWeight: 'bold', color: theme ? theme.palette.success.dark : '#388e3c' }}>
               {result.score} / {result.totalPoints} points ({Math.round((result.score / result.totalPoints) * 100)}%)
             </Typography>
             
