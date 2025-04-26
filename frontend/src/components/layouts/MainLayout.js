@@ -31,7 +31,7 @@ import {
   Help as HelpIcon,
   Home as HomeIcon,
   School as SchoolIcon,
-  HowToReg as RegisterIcon
+  PersonAdd as RegisterIcon
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
 import Footer from '../common/Footer';
@@ -59,12 +59,14 @@ const MainLayout = () => {
   
 
 
+ 
   const handleLogout = () => {
     logout();
     handleProfileMenuClose();
     navigate('/');
   };
 
+ 
   
   const handleNavigate = (path) => {
     navigate(path);
@@ -78,7 +80,6 @@ const MainLayout = () => {
     const items = [
       { text: 'Home', icon: <HomeIcon />, path: '/' },
       { text: 'Find Teachers', icon: <SchoolIcon />, path: '/find-teachers' },
-      { text: 'Hiring', icon: <RegisterIcon />, path: '/hiring' },
       { text: 'About', icon: <InfoIcon />, path: '/about' },
       { text: 'Contact', icon: <ContactIcon />, path: '/contact' }
     ];
@@ -90,8 +91,7 @@ const MainLayout = () => {
           { text: 'Dashboard', icon: <DashboardIcon />, path: '/student/dashboard' },
           { text: 'My Bookings', icon: <SchoolIcon />, path: '/student/bookings' },
           { text: 'My Classes', icon: <SchoolIcon />, path: '/student/classes' },
-          { text: 'Assessments', icon: <SchoolIcon />, path: '/student/assessments' },
-          { text: 'Help Center', icon: <HelpIcon />, path: '/student/help' }
+          { text: 'Assessments', icon: <SchoolIcon />, path: '/student/assessments' }
         );
       } else if (currentUser.role === 'parent') {
         items.push(
@@ -133,8 +133,8 @@ const MainLayout = () => {
   
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <AppBar position="static" color="inherit" elevation={4} sx={{ boxShadow: '0 4px 24px 0 rgba(67,97,238,0.10)' }}>
-        <Toolbar sx={{ minHeight: 72, px: { xs: 1, md: 4 } }}>
+      <AppBar position="sticky" color="default" elevation={1}>
+        <Toolbar>
           {isMobile && (
             <IconButton
               color="inherit"
@@ -194,11 +194,11 @@ const MainLayout = () => {
               
               <IconButton onClick={handleProfileMenuOpen}>
                 <Avatar 
-                  alt={`${currentUser.firstName} ${currentUser.lastName}`} 
+                  alt={currentUser.name} 
                   src={currentUser.profilePicture || ''}
                   sx={{ width: 40, height: 40 }}
                 >
-                  {currentUser.firstName ? currentUser.firstName[0].toUpperCase() : 'U'}
+                  {currentUser.name ? currentUser.name[0].toUpperCase() : 'U'}
                 </Avatar>
               </IconButton>
               
@@ -209,10 +209,7 @@ const MainLayout = () => {
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
               >
-                <MenuItem onClick={() => { 
-                  handleProfileMenuClose(); 
-                  handleNavigate(`/${currentUser.role}/profile`); 
-                }}>
+                <MenuItem onClick={() => { handleProfileMenuClose(); handleNavigate('/profile'); }}>
                   <ListItemIcon>
                     <PersonIcon fontSize="small" />
                   </ListItemIcon>
@@ -258,11 +255,9 @@ const MainLayout = () => {
         {drawer}
       </Drawer>
       
-      <Box component="main" sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <Container maxWidth="lg" sx={{ flex: 1, display: 'flex', flexDirection: 'column', py: 4 }}>
-          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <Outlet />
-          </Box>
+      <Box component="main" sx={{ flexGrow: 1 }}>
+        <Container maxWidth="lg" sx={{ py: 4 }}>
+          <Outlet />
         </Container>
       </Box>
       

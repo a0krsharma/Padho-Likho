@@ -10,7 +10,6 @@ import {
 } from '@mui/icons-material';
 import { Link as RouterLink } from 'react-router-dom';
 
-
 const Footer = () => {
   return (
     <Box
@@ -24,8 +23,6 @@ const Footer = () => {
       }}
     >
       <Container maxWidth="lg">
-
-        
         <Grid container spacing={4}>
           <Grid item xs={12} sm={6} md={3}>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -93,7 +90,7 @@ const Footer = () => {
             <Link component={RouterLink} to="/student/assessments" color="inherit" display="block" sx={{ mb: 1 }}>
               Take Assessments
             </Link>
-            <Link component={RouterLink} to="/student/help" color="inherit" display="block" sx={{ mb: 1 }}>
+            <Link component={RouterLink} to="/help/students" color="inherit" display="block" sx={{ mb: 1 }}>
               Student Help Center
             </Link>
           </Grid>
@@ -111,7 +108,7 @@ const Footer = () => {
             <Link component={RouterLink} to="/teacher/classes" color="inherit" display="block" sx={{ mb: 1 }}>
               Manage Classes
             </Link>
-            <Link component={RouterLink} to="/teacher/help" color="inherit" display="block" sx={{ mb: 1 }}>
+            <Link component={RouterLink} to="/help/teachers" color="inherit" display="block" sx={{ mb: 1 }}>
               Teacher Help Center
             </Link>
             <Link component={RouterLink} to="/teacher/verification" color="inherit" display="block" sx={{ mb: 1 }}>
@@ -128,13 +125,13 @@ const Footer = () => {
           </Typography>
           
           <Box>
-            <Link component={RouterLink} to="/legal/privacy-policy" color="inherit" sx={{ mr: 2 }}>
+            <Link component={RouterLink} to="/privacy-policy" color="inherit" sx={{ mr: 2 }}>
               Privacy Policy
             </Link>
-            <Link component={RouterLink} to="/legal/terms-of-service" color="inherit" sx={{ mr: 2 }}>
+            <Link component={RouterLink} to="/terms-of-service" color="inherit" sx={{ mr: 2 }}>
               Terms of Service
             </Link>
-            <Link component={RouterLink} to="/legal/refund-policy" color="inherit">
+            <Link component={RouterLink} to="/refund-policy" color="inherit">
               Refund Policy
             </Link>
           </Box>

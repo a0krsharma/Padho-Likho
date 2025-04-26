@@ -1,8 +1,6 @@
 const User = require('../models/user.model');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
-const bcrypt = require('bcryptjs');
-const { mockUsers } = require('../middleware/auth.middleware');
 
 // Register a new user
 exports.register = async (req, res) => {
@@ -38,8 +36,8 @@ exports.register = async (req, res) => {
       experience
     } = req.body;
 
-    // Check if user already exists in mock data
-    const existingUser = mockUsers.find(u => u.email === email);
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ 
         success: false,
@@ -47,26 +45,20 @@ exports.register = async (req, res) => {
       });
     }
 
-    // Create new user ID (incremental from last user)
-    const newUserId = (mockUsers[mockUsers.length - 1]?._id || 0) + 1;
-    
-    // Create user data
+    // Create user based on role
     const userData = {
-      _id: newUserId.toString(),
+      name: `${firstName} ${lastName}`.trim(),
       email,
       password,
-      firstName,
-      lastName,
       role: role || 'student',
       phone: phone || '',
-      address: address || '',
-      city: city || '',
-      state: state || '',
-      zipCode: zipCode || '',
-      country: country || '',
-      isVerified: true,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      address: {
+        street: typeof address === 'object' ? address.street : address || '',
+        city: city || '',
+        state: state || '',
+        pincode: zipCode || '',
+        country: country || ''
+      }
     };
     
     console.log('Processed user data:', userData);
@@ -74,9 +66,9 @@ exports.register = async (req, res) => {
     // Add role-specific details
     if (role === 'teacher') {
       userData.teacherDetails = {
-        subjects: Array.isArray(subjects) ? subjects : (subjects ? [subjects] : []),
-        qualifications: Array.isArray(qualifications) ? qualifications : (qualifications ? [qualifications] : []),
+        qualifications: qualifications ? (Array.isArray(qualifications) ? qualifications : [qualifications]) : [],
         experience: experience ? Number(experience) : 0,
+        subjects: Array.isArray(subjects) ? subjects : (subjects ? [subjects] : []),
         hourlyRate: {
           individual: 2999,
           twoStudents: 1499,
@@ -98,36 +90,42 @@ exports.register = async (req, res) => {
       console.log('Parent details:', userData.parentDetails);
     }
 
-    // Add user to mock data
-    mockUsers.push(userData);
+    // Create new user
+    const user = new User(userData);
     
-    // Create JWT token
+    // Generate email verification token
+    const verificationToken = user.generateVerificationToken();
+    
+    try {
+      // Save user with verification token
+      await user.save();
+      console.log('User saved successfully');
+    } catch (saveError) {
+      console.error('Error saving user:', saveError);
+      // If there's a validation error, throw it to be caught by the outer catch block
+      if (saveError.name === 'ValidationError') {
+        throw saveError;
+      }
+      // For other errors, provide a more specific message
+      throw new Error('Failed to save user: ' + saveError.message);
+    }
+
+    // Generate JWT token
     const token = jwt.sign(
-      { userId: newUserId.toString(), role: userData.role },
+      { userId: user._id, role: user.role },
       process.env.JWT_SECRET || 'padho_likho_jwt_secret_key',
       { expiresIn: '7d' }
     );
 
-    return res.status(201).json({
+    // In a production app, you would send an email with the verification link
+    // For now, just include it in the response
+
+    res.status(201).json({
       success: true,
-      message: 'Registration successful',
+      message: 'User registered successfully',
       token,
-      user: {
-        _id: userData._id,
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        email: userData.email,
-        role: userData.role,
-        phone: userData.phone,
-        address: userData.address,
-        city: userData.city,
-        state: userData.state,
-        zipCode: userData.zipCode,
-        country: userData.country,
-        isVerified: userData.isVerified,
-        createdAt: userData.createdAt,
-        updatedAt: userData.updatedAt
-      }
+      user: user.getPublicProfile(),
+      verificationToken // This would normally be sent via email
     });
   } catch (error) {
     console.error('Registration error:', error);
@@ -177,8 +175,8 @@ exports.login = async (req, res) => {
 
     const { email, password } = req.body;
 
-    // Find user by email in mock data
-    const user = mockUsers.find(u => u.email === email);
+    // Find user by email
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({ 
         success: false,
@@ -186,8 +184,8 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Check password (simple comparison for mock data)
-    const isMatch = user.password === password;
+    // Check password
+    const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       return res.status(401).json({ 
         success: false,
@@ -202,32 +200,8 @@ exports.login = async (req, res) => {
       { expiresIn: '7d' }
     );
 
-    // Create user data to return
-    const userData = {
-      _id: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      role: user.role,
-      phone: user.phone,
-      address: user.address,
-      city: user.city,
-      state: user.state,
-      zipCode: user.zipCode,
-      country: user.country,
-      isVerified: user.isVerified,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt
-    };
-    
-    // Add role-specific data
-    if (user.role === 'teacher' && user.teacherDetails) {
-      userData.teacherDetails = user.teacherDetails;
-    } else if (user.role === 'student' && user.studentDetails) {
-      userData.studentDetails = user.studentDetails;
-    } else if (user.role === 'parent' && user.parentDetails) {
-      userData.parentDetails = user.parentDetails;
-    }
+    // Return role-specific data
+    const userData = user.getPublicProfile();
     
     res.json({
       success: true,
@@ -256,50 +230,21 @@ exports.login = async (req, res) => {
 // Get current user profile
 exports.getCurrentUser = async (req, res) => {
   try {
-    // Get token from header
-    const token = req.header('Authorization')?.replace('Bearer ', '');
-    
-    if (!token) {
-      return res.status(401).json({ 
-        success: false,
-        message: 'Authentication required' 
-      });
-    }
-    
-    // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'padho_likho_jwt_secret_key');
-    
-    // Find user by id from mock data
-    const user = mockUsers.find(u => u._id === decoded.userId.toString());
-    
+    const user = await User.findById(req.user.userId);
     if (!user) {
-      return res.status(401).json({ 
+      return res.status(404).json({ 
         success: false,
         message: 'User not found' 
       });
     }
-
-    // Return user data without sensitive info
-    const { password, ...userData } = user;
-    // Add role-specific data
-    if (user.role === 'student' && user.studentDetails) {
-      userData.studentDetails = user.studentDetails;
-    } else if (user.role === 'teacher' && user.teacherDetails) {
-      userData.teacherDetails = user.teacherDetails;
-    } else if (user.role === 'parent' && user.parentDetails) {
-      userData.parentDetails = user.parentDetails;
-    }
     
     res.json({ 
       success: true,
-      user: userData 
+      user: user.getPublicProfile() 
     });
   } catch (error) {
     console.error('Get current user error:', error);
-    res.status(401).json({ 
-      success: false,
-      message: 'Invalid or expired token' 
-    });
+    res.status(500).json({ message: 'Server error while fetching user profile' });
   }
 };
 

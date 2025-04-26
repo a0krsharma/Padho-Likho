@@ -122,7 +122,7 @@ const ProfileCard = ({ user, onEdit }) => {
   const fullName = user.name || `${user.firstName || ''} ${user.lastName || ''}`.trim();
 
   return (
-    <Card sx={{ mb: 3, overflow: 'visible', elevation: 4, borderRadius: 4, boxShadow: '0 8px 32px 0 rgba(67,97,238,0.10)' }}>
+    <Card sx={{ mb: 3, overflow: 'visible' }}>
       <CardContent>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
           <Typography variant="h5" component="h2">Profile</Typography>
@@ -131,7 +131,6 @@ const ProfileCard = ({ user, onEdit }) => {
               startIcon={<EditIcon />} 
               variant="outlined" 
               size="small"
-              sx={{ borderRadius: 3, fontWeight: 600, px: 3, py: 1, boxShadow: '0 2px 8px rgba(67,97,238,0.08)', transition: 'background 0.2s', '&:hover': { background: 'linear-gradient(135deg, #4361ee 0%, #738eef 100%)', color: 'white' } }}
               onClick={onEdit}
             >
               Edit

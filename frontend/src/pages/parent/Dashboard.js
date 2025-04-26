@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Box, Container, Typography, Grid, Button, Avatar, Divider, List, ListItem, ListItemText, ListItemAvatar, LinearProgress, Paper, Chip, Tabs, Tab, IconButton } from '@mui/material';
 import { School as SchoolIcon, Person as PersonIcon, Event as EventIcon, Assignment as AssignmentIcon, TrendingUp as TrendingUpIcon, CalendarToday as CalendarTodayIcon, ArrowForward as ArrowForwardIcon, AccessTime as AccessTimeIcon, CheckCircle as CheckCircleIcon, Grade as GradeIcon, Add as AddIcon, Message as MessageIcon } from '@mui/icons-material';
@@ -11,6 +12,49 @@ import { School as SchoolIcon, Person as PersonIcon, Event as EventIcon, Assignm
 // import DataTable from '../../components/common/DataTable';
 // import Breadcrumbs from '../../components/common/Breadcrumbs';
 // import ProgressTracker from '../../components/common/ProgressTracker';
+
+
+import React, { useState } from 'react';
+import { 
+  Box, 
+  Container, 
+  Typography, 
+  Grid, 
+  Card, 
+  CardContent, 
+  Button, 
+  Avatar,
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  ListItemIcon,
+  LinearProgress,
+  Paper,
+  Chip,
+  Tabs,
+  Tab,
+  IconButton,
+  useTheme
+} from '@mui/material';
+import { 
+  School as SchoolIcon,
+  Person as PersonIcon,
+  Event as EventIcon,
+  Assignment as AssignmentIcon,
+  TrendingUp as TrendingUpIcon,
+  Notifications as NotificationsIcon,
+  CalendarToday as CalendarTodayIcon,
+  ArrowForward as ArrowForwardIcon,
+  AccessTime as AccessTimeIcon,
+  CheckCircle as CheckCircleIcon,
+  Grade as GradeIcon,
+  Add as AddIcon,
+  Message as MessageIcon
+} from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+
 
 // Sample data
 const childrenData = [
@@ -135,192 +179,262 @@ const notifications = [
 const ParentDashboard = () => {
   const navigate = useNavigate();
   const theme = useTheme();
-  const [selectedChild, setSelectedChild] = useState(0);
-  const [activeTab, setActiveTab] = useState(0);
-
+  const [selectedChild, setSelectedChild] = useState(childrenData[0].id);
+  
+  // Get current date
+  const currentDate = new Date().toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+  
+  // Filter data for selected child
+  const activeChild = childrenData.find(child => child.id === selectedChild);
+  
+  const filteredClasses = upcomingClasses.filter(
+    classItem => classItem.childId === selectedChild
+  );
+  
+  const filteredAssessments = recentAssessments.filter(
+    assessment => assessment.childId === selectedChild
+  );
+  
   const handleChildChange = (event, newValue) => {
     setSelectedChild(newValue);
   };
-
-  const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue);
-  };
-
-  const currentChild = childrenData[selectedChild];
-
+  
   return (
-    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Container maxWidth="lg" sx={{ py: 6, flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Box>
-            <Typography variant="h4" component="h1" gutterBottom>
-              Parent Dashboard
-            </Typography>
-            <Breadcrumbs 
-              items={[
-                { label: 'Home', link: '/' },
-                { label: 'Dashboard', link: '/parent/dashboard', active: true }
-              ]}
-            />
+    <Box>
+      {/* Header Section */}
+      <Box 
+        sx={{ 
+          backgroundColor: 'primary.light',
+          backgroundImage: 'linear-gradient(135deg, #4361ee 0%, #738eef 100%)',
+          color: 'white',
+          py: 4,
+          borderRadius: 4,
+          mb: 4
+        }}
+      >
+        <Container maxWidth="lg">
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Box>
+              <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold' }}>
+                Parent Dashboard
+              </Typography>
+              <Typography variant="h6">
+                Welcome back, Mr. Singh!
+              </Typography>
+              <Typography variant="body1">
+                {currentDate}
+              </Typography>
+            </Box>
+            <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+              <Button 
+                variant="contained" 
+                color="secondary"
+                startIcon={<MessageIcon />}
+                onClick={() => navigate('/parent/messages')}
+              >
+                Message Teachers
+              </Button>
+            </Box>
           </Box>
-          <NotificationBell 
-            notifications={notifications}
-            onViewAll={() => navigate('/parent/notifications')}
-            onMarkAllRead={() => console.log('Mark all as read')}
-          />
+        </Container>
+      </Box>
+      
+      <Container maxWidth="lg">
+        {/* Quick Actions - Mobile Only */}
+        <Box sx={{ display: { xs: 'block', md: 'none' }, mb: 4 }}>
+          <Button 
+            variant="contained" 
+            fullWidth
+            startIcon={<MessageIcon />}
+            onClick={() => navigate('/parent/messages')}
+          >
+            Message Teachers
+          </Button>
         </Box>
-
+        
         {/* Child Selector */}
-        <Box sx={{ mb: 4 }}>
+        <Card elevation={2} sx={{ mb: 4, borderRadius: 3 }}>
           <Tabs
             value={selectedChild}
             onChange={handleChildChange}
             variant="scrollable"
             scrollButtons="auto"
-            sx={{ 
-              mb: 2,
-              borderBottom: 1,
-              borderColor: 'divider',
-              '& .MuiTab-root': {
-                minWidth: 'auto',
-                px: 3
-              }
-            }}
+            allowScrollButtonsMobile
+            sx={{ borderBottom: 1, borderColor: 'divider' }}
           >
-            {childrenData.map((child, index) => (
+            {childrenData.map((child) => (
               <Tab 
                 key={child.id}
+                value={child.id}
                 label={
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <UserAvatar 
-                      name={child.name}
-                      sx={{ mr: 1, width: 32, height: 32 }}
-                    />
-                    <Typography variant="body2">{child.name}</Typography>
+                    <Avatar sx={{ width: 24, height: 24, mr: 1 }}>
+                      {child.name.charAt(0)}
+                    </Avatar>
+                    {child.name}
                   </Box>
                 }
               />
             ))}
             <Tab 
-              icon={<AddIcon />} 
-              iconPosition="start" 
-              label="Add Child" 
+              value="add"
+              icon={<AddIcon />}
+              iconPosition="start"
+              label="Add Child"
               onClick={() => navigate('/parent/add-child')}
             />
           </Tabs>
-        </Box>
-
-        {/* Stats Cards */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={6} md={3}>
-            <StatCard 
-              icon={<EventIcon sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />}
-              title="Upcoming Classes"
-              value={currentChild.upcomingClasses.length}
-            />
-          </Grid>
-          <Grid item xs={6} md={3}>
-            <StatCard 
-              icon={<AssignmentIcon sx={{ fontSize: 40, color: 'warning.main', mb: 1 }} />}
-              title="Pending Assignments"
-              value={currentChild.pendingAssignments.length}
-            />
-          </Grid>
-          <Grid item xs={6} md={3}>
-            <StatCard 
-              icon={<GradeIcon sx={{ fontSize: 40, color: 'info.main', mb: 1 }} />}
-              title="Average Grade"
-              value={`${currentChild.averageGrade}%`}
-            />
-          </Grid>
-          <Grid item xs={6} md={3}>
-            <StatCard 
-              icon={<TrendingUpIcon sx={{ fontSize: 40, color: 'success.main', mb: 1 }} />}
-              title="Attendance"
-              value={`${currentChild.attendance}%`}
-            />
-          </Grid>
-        </Grid>
+          
+          {activeChild && (
+            <CardContent>
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={4}>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Avatar 
+                      sx={{ 
+                        width: 80, 
+                        height: 80, 
+                        mr: 2,
+                        bgcolor: 'primary.main'
+                      }}
+                    >
+                      {activeChild.name.charAt(0)}
+                    </Avatar>
+                    <Box>
+                      <Typography variant="h6">{activeChild.name}</Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Class {activeChild.class} | {activeChild.age} years old
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {activeChild.school}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Grid>
+                
+                <Grid item xs={12} md={8}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={6} sm={3}>
+                      <Paper 
+                        elevation={0} 
+                        sx={{ 
+                          p: 1.5, 
+                          textAlign: 'center',
+                          bgcolor: 'primary.light',
+                          color: 'white',
+                          borderRadius: 2
+                        }}
+                      >
+                        <Typography variant="h5">{activeChild.upcomingClasses}</Typography>
+                        <Typography variant="body2">Upcoming Classes</Typography>
+                      </Paper>
+                    </Grid>
+                    <Grid item xs={6} sm={3}>
+                      <Paper 
+                        elevation={0} 
+                        sx={{ 
+                          p: 1.5, 
+                          textAlign: 'center',
+                          bgcolor: 'warning.light',
+                          color: 'white',
+                          borderRadius: 2
+                        }}
+                      >
+                        <Typography variant="h5">{activeChild.pendingAssignments}</Typography>
+                        <Typography variant="body2">Pending Tasks</Typography>
+                      </Paper>
+                    </Grid>
+                    <Grid item xs={6} sm={3}>
+                      <Paper 
+                        elevation={0} 
+                        sx={{ 
+                          p: 1.5, 
+                          textAlign: 'center',
+                          bgcolor: 'success.light',
+                          color: 'white',
+                          borderRadius: 2
+                        }}
+                      >
+                        <Typography variant="h5">{activeChild.completedAssessments}</Typography>
+                        <Typography variant="body2">Assessments</Typography>
+                      </Paper>
+                    </Grid>
+                    <Grid item xs={6} sm={3}>
+                      <Paper 
+                        elevation={0} 
+                        sx={{ 
+                          p: 1.5, 
+                          textAlign: 'center',
+                          bgcolor: 'info.light',
+                          color: 'white',
+                          borderRadius: 2
+                        }}
+                      >
+                        <Typography variant="h5">{activeChild.overallProgress}%</Typography>
+                        <Typography variant="body2">Progress</Typography>
+                      </Paper>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+              
+              <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
+                <Button 
+                  variant="outlined"
+                  endIcon={<ArrowForwardIcon />}
+                  onClick={() => navigate(`/parent/child-progress/${activeChild.id}`)}
+                >
+                  View Detailed Progress
+                </Button>
+              </Box>
+            </CardContent>
+          )}
+        </Card>
         
-        <Grid container spacing={4} alignItems="stretch">
+        <Grid container spacing={4}>
           {/* Left Column */}
-          <Grid item xs={12} md={8} sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            {/* Child Profile Summary */}
-            <ContentCard 
-              title="Child Profile"
-              subtitle="View complete profile"
-              action={() => navigate(`/parent/child/${currentChild.id}`)}
-              icon={<PersonIcon />}
-              sx={{ height: '100%' }}
-            >
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                <UserAvatar 
-                  name={currentChild.name}
-                  sx={{ 
-                    width: 80, 
-                    height: 80, 
-                    mr: 2,
-                    fontSize: '2rem'
-                  }}
-                />
-                <Box>
-                  <Typography variant="h6">{currentChild.name}</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Age: {currentChild.age} | Class: {currentChild.class}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    School: {currentChild.school}
-                  </Typography>
-                </Box>
-              </Box>
-              
-              <Divider sx={{ mb: 2 }} />
-              
-              <Typography variant="subtitle2" gutterBottom>Subjects</Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
-                {currentChild.subjects.map((subject, index) => (
-                  <Chip 
-                    key={index} 
-                    label={subject} 
-                    size="small" 
-                    color={
-                      index % 5 === 0 ? 'primary' : 
-                      index % 5 === 1 ? 'secondary' : 
-                      index % 5 === 2 ? 'success' : 
-                      index % 5 === 3 ? 'info' : 
-                      'warning'
-                    }
-                  />
-                ))}
-              </Box>
-            </ContentCard>
-            
+          <Grid item xs={12} md={8}>
             {/* Upcoming Classes */}
-            <ContentCard 
-              title="Upcoming Classes"
-              subtitle="View all classes"
-              action={() => navigate('/parent/classes')}
-              icon={<EventIcon />}
-              sx={{ height: '100%' }}
-            >
-              {currentChild.upcomingClasses.length > 0 ? (
-                <Box sx={{ maxHeight: 300, overflowY: 'auto' }}>
+            <Card elevation={2} sx={{ mb: 4, borderRadius: 3 }}>
+              <CardContent>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                  <Typography variant="h6" component="h2" sx={{ display: 'flex', alignItems: 'center' }}>
+                    <EventIcon sx={{ mr: 1 }} /> Upcoming Classes
+                  </Typography>
+                  <Button 
+                    endIcon={<ArrowForwardIcon />}
+                    onClick={() => navigate(`/parent/child-classes/${activeChild.id}`)}
+                  >
+                    View All
+                  </Button>
+                </Box>
+                <Divider sx={{ mb: 2 }} />
+                
+                {filteredClasses.length > 0 ? (
                   <List>
-                    {currentChild.upcomingClasses.map((classItem) => (
+                    {filteredClasses.map((classItem) => (
                       <Paper 
                         key={classItem.id} 
                         elevation={1} 
-                        sx={{ mb: 2, p: 2.5, borderRadius: 4, boxShadow: '0 4px 16px 0 rgba(67,97,238,0.08)' }}
+                        sx={{ mb: 2, p: 2, borderRadius: 2 }}
                       >
                         <Grid container spacing={2} alignItems="center">
                           <Grid item xs={12} sm={7}>
-                            <Box>
-                              <Typography variant="subtitle1" sx={{ fontWeight: 'medium' }}>
-                                {classItem.subject}: {classItem.topic}
-                              </Typography>
-                              <Typography variant="body2" color="text.secondary">
-                                Teacher: {classItem.teacher}
-                              </Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                              <Avatar src={classItem.teacherImage} sx={{ mr: 2 }} />
+                              <Box>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 'medium' }}>
+                                  {classItem.subject}: {classItem.topic}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                  Teacher: {classItem.teacher}
+                                </Typography>
+                              </Box>
                             </Box>
                           </Grid>
                           <Grid item xs={12} sm={3}>
@@ -337,8 +451,7 @@ const ParentDashboard = () => {
                             <Button 
                               variant="outlined" 
                               size="small"
-                              sx={{ borderRadius: 3, fontWeight: 600, px: 3, py: 1, boxShadow: '0 2px 8px rgba(67,97,238,0.08)', transition: 'background 0.2s', '&:hover': { background: 'linear-gradient(135deg, #4361ee 0%, #738eef 100%)', color: 'white' } }}
-                              onClick={() => navigate(`/parent/classes/${classItem.id}`)}
+                              onClick={() => navigate(`/parent/class-details/${classItem.id}`)}
                             >
                               Details
                             </Button>
@@ -347,176 +460,262 @@ const ParentDashboard = () => {
                       </Paper>
                     ))}
                   </List>
-                </Box>
-              ) : (
-                <Box sx={{ textAlign: 'center', py: 4 }}>
-                  <CalendarTodayIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
-                  <Typography variant="body1" color="text.secondary">
-                    No upcoming classes scheduled
-                  </Typography>
-                </Box>
-              )}
-            </ContentCard>
+                ) : (
+                  <Box sx={{ textAlign: 'center', py: 4 }}>
+                    <CalendarTodayIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
+                    <Typography variant="body1" color="text.secondary">
+                      No upcoming classes scheduled
+                    </Typography>
+                    <Button 
+                      variant="contained" 
+                      sx={{ mt: 2 }}
+                      onClick={() => navigate('/find-teachers')}
+                    >
+                      Book a Class
+                    </Button>
+                  </Box>
+                )}
+              </CardContent>
+            </Card>
             
-            {/* Pending Assignments */}
-            <ContentCard 
-              title="Pending Assignments"
-              subtitle="View all assignments"
-              action={() => navigate('/parent/assignments')}
-              icon={<AssignmentIcon />}
-              sx={{ height: '100%' }}
-            >
-              {currentChild.pendingAssignments.length > 0 ? (
-                <Box sx={{ maxHeight: 300, overflowY: 'auto' }}>
+            {/* Recent Assessments */}
+            <Card elevation={2} sx={{ mb: 4, borderRadius: 3 }}>
+              <CardContent>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                  <Typography variant="h6" component="h2" sx={{ display: 'flex', alignItems: 'center' }}>
+                    <AssignmentIcon sx={{ mr: 1 }} /> Recent Assessments
+                  </Typography>
+                  <Button 
+                    endIcon={<ArrowForwardIcon />}
+                    onClick={() => navigate(`/parent/child-assessments/${activeChild.id}`)}
+                  >
+                    View All
+                  </Button>
+                </Box>
+                <Divider sx={{ mb: 2 }} />
+                
+                {filteredAssessments.length > 0 ? (
                   <List>
-                    {currentChild.pendingAssignments.map((assignment) => (
+                    {filteredAssessments.map((assessment) => (
                       <Paper 
-                        key={assignment.id} 
+                        key={assessment.id} 
                         elevation={1} 
-                        sx={{ mb: 2, p: 2.5, borderRadius: 4, boxShadow: '0 4px 16px 0 rgba(67,97,238,0.08)' }}
+                        sx={{ mb: 2, p: 2, borderRadius: 2 }}
                       >
                         <Grid container spacing={2} alignItems="center">
                           <Grid item xs={12} sm={7}>
                             <Box>
                               <Typography variant="subtitle1" sx={{ fontWeight: 'medium' }}>
-                                {assignment.title}
+                                {assessment.title}
                               </Typography>
                               <Typography variant="body2" color="text.secondary">
-                                Subject: {assignment.subject} | Teacher: {assignment.teacher}
+                                Subject: {assessment.subject}
                               </Typography>
                             </Box>
                           </Grid>
                           <Grid item xs={6} sm={3}>
                             <Typography variant="body2" color="text.secondary">
-                              Due: {assignment.dueDate}
+                              Date: {new Date(assessment.date).toLocaleDateString()}
                             </Typography>
                           </Grid>
                           <Grid item xs={6} sm={2} sx={{ textAlign: 'right' }}>
-                            <Chip 
-                              label={assignment.status} 
-                              color={assignment.status === 'Completed' ? 'success' : 'warning'}
-                              size="small"
-                            />
+                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                              <Typography 
+                                variant="subtitle2" 
+                                sx={{ 
+                                  color: (assessment.score / assessment.totalMarks) * 100 >= 80 
+                                    ? 'success.main' 
+                                    : (assessment.score / assessment.totalMarks) * 100 >= 60
+                                      ? 'warning.main'
+                                      : 'error.main'
+                                }}
+                              >
+                                {assessment.score}/{assessment.totalMarks}
+                              </Typography>
+                              <Typography variant="body2">
+                                {((assessment.score / assessment.totalMarks) * 100).toFixed(0)}%
+                              </Typography>
+                            </Box>
                           </Grid>
                         </Grid>
                       </Paper>
                     ))}
                   </List>
-                </Box>
-              ) : (
-                <Box sx={{ textAlign: 'center', py: 4 }}>
-                  <AssignmentIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
-                  <Typography variant="body1" color="text.secondary">
-                    No pending assignments
-                  </Typography>
-                </Box>
-              )}
-            </ContentCard>
+                ) : (
+                  <Box sx={{ textAlign: 'center', py: 4 }}>
+                    <AssignmentIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
+                    <Typography variant="body1" color="text.secondary">
+                      No recent assessments
+                    </Typography>
+                  </Box>
+                )}
+              </CardContent>
+            </Card>
+            
+            {/* Subject Progress */}
+            <Card elevation={2} sx={{ mb: 4, borderRadius: 3 }}>
+              <CardContent>
+                <Typography variant="h6" component="h2" sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <TrendingUpIcon sx={{ mr: 1 }} /> Subject Progress
+                </Typography>
+                <Divider sx={{ mb: 3 }} />
+                
+                <Grid container spacing={3}>
+                  {activeChild && activeChild.subjects.map((subject, index) => (
+                    <Grid item xs={12} key={index}>
+                      <Box sx={{ mb: 2 }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                          <Typography variant="body1">{subject}</Typography>
+                          <Typography variant="body2">
+                            {/* Random progress for demo purposes */}
+                            {Math.floor(65 + Math.random() * 25)}%
+                          </Typography>
+                        </Box>
+                        <LinearProgress 
+                          variant="determinate" 
+                          value={65 + Math.random() * 25} 
+                          sx={{ height: 8, borderRadius: 4 }}
+                        />
+                      </Box>
+                    </Grid>
+                  ))}
+                </Grid>
+              </CardContent>
+            </Card>
           </Grid>
           
           {/* Right Column */}
-          <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            {/* Progress Tracker */}
-            <ContentCard 
-              title="Academic Progress"
-              subtitle="View detailed progress"
-              action={() => navigate(`/parent/progress/${currentChild.id}`)}
-              icon={<TrendingUpIcon />}
-              sx={{ height: '100%' }}
-            >
-              <Box sx={{ mb: 3 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                  <Typography variant="body2">Overall Progress</Typography>
-                  <Typography variant="body2" fontWeight="bold">{currentChild.overallProgress}%</Typography>
+          <Grid item xs={12} md={4}>
+            {/* Profile Summary */}
+            <Card elevation={2} sx={{ mb: 4, borderRadius: 3 }}>
+              <CardContent sx={{ textAlign: 'center' }}>
+                <Avatar 
+                  sx={{ 
+                    width: 100, 
+                    height: 100, 
+                    mx: 'auto', 
+                    mb: 2,
+                    border: '4px solid',
+                    borderColor: 'primary.light'
+                  }}
+                >
+                  S
+                </Avatar>
+                <Typography variant="h6">Mr. Suresh Singh</Typography>
+                <Typography variant="body2" color="text.secondary" gutterBottom>
+                  Parent of {childrenData.length} {childrenData.length === 1 ? 'child' : 'children'}
+                </Typography>
+                <Box sx={{ mt: 3 }}>
+                  <Button 
+                    variant="outlined" 
+                    fullWidth
+                    onClick={() => navigate('/parent/profile')}
+                  >
+                    View Profile
+                  </Button>
                 </Box>
-                <ProgressTracker 
-                  value={currentChild.overallProgress} 
-                  color="primary"
-                />
-              </Box>
-              
-              <Typography variant="subtitle2" sx={{ mb: 2 }}>Subject Progress</Typography>
-              
-              {currentChild.subjectProgress.map((subject) => (
-                <Box key={subject.id} sx={{ mb: 2 }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                    <Typography variant="body2">{subject.name}</Typography>
-                    <Typography variant="body2" fontWeight="bold">{subject.progress}%</Typography>
-                  </Box>
-                  <ProgressTracker 
-                    value={subject.progress} 
-                    color={
-                      subject.progress >= 80 ? 'success' : 
-                      subject.progress >= 60 ? 'primary' : 
-                      subject.progress >= 40 ? 'warning' : 
-                      'error'
-                    }
-                  />
-                </Box>
-              ))}
-            </ContentCard>
+              </CardContent>
+            </Card>
             
-            {/* Calendar and Recent Activity side-by-side */}
-            <Grid container spacing={2} sx={{ mb: 4 }}>
-              <Grid item xs={12} md={6}>
-                <ContentCard 
-                  title="Calendar"
-                  subtitle="View full calendar"
-                  action={() => navigate('/parent/calendar')}
-                  icon={<CalendarTodayIcon />}
-                >
-                  <Calendar 
-                    events={currentChild.calendarEvents}
-                    onEventClick={(event) => navigate(`/parent/events/${event.id}`)}
-                  />
-                </ContentCard>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <ContentCard 
-                  title="Recent Activity"
-                  subtitle="View all messages"
-                  action={() => navigate('/parent/messages')}
-                  icon={<MessageIcon />}
-                >
-                  <List>
-                    {currentChild.teacherMessages.map((message) => (
-                      <ListItem 
-                        key={message.id} 
-                        sx={{ px: 2, py: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}
-                      >
-                        <ListItemAvatar>
-                          <UserAvatar name={message.teacher} role="teacher" />
-                        </ListItemAvatar>
-                        <ListItemText 
-                          primary={message.teacher}
-                          secondary={message.preview}
-                          primaryTypographyProps={{ variant: 'body2' }}
-                          secondaryTypographyProps={{ variant: 'caption' }}
-                        />
-                        <Typography variant="caption" color="text.secondary">
-                          {message.time}
-                        </Typography>
-                      </ListItem>
-                    ))}
-                  </List>
-                  <Box sx={{ textAlign: 'center', mt: 2 }}>
-                    <Button 
-                      variant="outlined" 
-                      size="small"
-                      startIcon={<AddIcon />}
-                      onClick={() => navigate('/parent/messages/new')}
+            {/* Notifications */}
+            <Card elevation={2} sx={{ mb: 4, borderRadius: 3 }}>
+              <CardContent>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                  <Typography variant="h6" component="h2" sx={{ display: 'flex', alignItems: 'center' }}>
+                    <NotificationsIcon sx={{ mr: 1 }} /> Notifications
+                  </Typography>
+                  <Button size="small">Mark All Read</Button>
+                </Box>
+                <Divider sx={{ mb: 2 }} />
+                
+                <List>
+                  {notifications.map((notification) => (
+                    <ListItem 
+                      key={notification.id} 
+                      sx={{ 
+                        px: 2, 
+                        py: 1.5, 
+                        borderBottom: '1px solid',
+                        borderColor: 'divider'
+                      }}
                     >
-                      New Message
-                    </Button>
-                  </Box>
-                </ContentCard>
-              </Grid>
-            </Grid>
+                      <ListItemText 
+                        primary={notification.message}
+                        secondary={notification.time}
+                        primaryTypographyProps={{ variant: 'body2' }}
+                        secondaryTypographyProps={{ variant: 'caption' }}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+                
+                <Box sx={{ textAlign: 'center', mt: 2 }}>
+                  <Button 
+                    endIcon={<ArrowForwardIcon />}
+                    size="small"
+                    onClick={() => navigate('/parent/notifications')}
+                  >
+                    View All Notifications
+                  </Button>
+                </Box>
+              </CardContent>
+            </Card>
+            
+            {/* Quick Links */}
+            <Card elevation={2} sx={{ borderRadius: 3 }}>
+              <CardContent>
+                <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
+                  Quick Links
+                </Typography>
+                <Divider sx={{ mb: 2 }} />
+                
+                <List sx={{ p: 0 }}>
+                  <ListItem 
+                    button 
+                    sx={{ borderRadius: 2 }}
+                    onClick={() => navigate('/parent/bookings')}
+                  >
+                    <ListItemAvatar>
+                      <Avatar sx={{ bgcolor: 'primary.light' }}>
+                        <CalendarTodayIcon />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Manage Bookings" />
+                  </ListItem>
+                  
+                  <ListItem 
+                    button 
+                    sx={{ borderRadius: 2 }}
+                    onClick={() => navigate('/parent/teachers')}
+                  >
+                    <ListItemAvatar>
+                      <Avatar sx={{ bgcolor: 'secondary.light' }}>
+                        <PersonIcon />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="View Teachers" />
+                  </ListItem>
+                  
+                  <ListItem 
+                    button 
+                    sx={{ borderRadius: 2 }}
+                    onClick={() => navigate('/parent/payments')}
+                  >
+                    <ListItemAvatar>
+                      <Avatar sx={{ bgcolor: 'success.light' }}>
+                        <GradeIcon />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Payment History" />
+                  </ListItem>
+                </List>
+              </CardContent>
+            </Card>
           </Grid>
         </Grid>
       </Container>
     </Box>
   );
-}
+};
 
 export default ParentDashboard;

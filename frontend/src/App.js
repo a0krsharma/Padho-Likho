@@ -18,8 +18,6 @@ import Contact from './pages/Contact';
 import FindTeachers from './pages/FindTeachers';
 import TeacherProfile from './pages/TeacherProfile';
 import BookTeacher from './pages/BookTeacher';
-import Hiring from './pages/Hiring';
-import AdminDashboard from './pages/admin/AdminDashboard';
 
 // Teacher pages
 import TeacherDashboard from './pages/teacher/Dashboard';
@@ -31,24 +29,30 @@ import CreateAssessment from './pages/teacher/CreateAssessment';
 // Student pages
 import StudentDashboard from './pages/student/Dashboard';
 import StudentAssessments from './pages/student/Assessments';
-import MyBookings from './pages/student/MyBookings';
-import MyClasses from './pages/student/MyClasses';
 
 // Profile page
 import Profile from './pages/profile/Profile';
 
-// Shared pages
-import BookingDetails from './pages/shared/BookingDetails';
-import ClassRoom from './pages/shared/ClassRoom';
-import AssessmentDetails from './pages/shared/AssessmentDetails';
-import TakeAssessment from './pages/shared/TakeAssessment';
-
-// Parent pages
-import ParentDashboard from './pages/parent/Dashboard';
-import ChildProgress from './pages/parent/ChildProgress';
-
 // Context
 import { AuthProvider } from './context/AuthContext';
+
+
+
+// Student pages placeholders (only for pages not yet implemented)
+const MyBookings = () => <PlaceholderComponent title="My Bookings" />;
+const MyClasses = () => <PlaceholderComponent title="My Classes" />;
+
+// Parent pages placeholders
+const ParentDashboard = () => <PlaceholderComponent title="Parent Dashboard" />;
+const ChildProgress = () => <PlaceholderComponent title="Child Progress" />;
+
+// Shared pages placeholders
+const ClassRoom = () => <PlaceholderComponent title="Class Room" />;
+const BookingDetails = () => <PlaceholderComponent title="Booking Details" />;
+const AssessmentDetails = () => <PlaceholderComponent title="Assessment Details" />;
+const TakeAssessment = () => <PlaceholderComponent title="Take Assessment" />;
+
+
 
 
 
@@ -59,25 +63,13 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   const [userRole, setUserRole] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Check auth status
+  // Simulate checking auth status
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       setIsAuthenticated(true);
-      
-      // Decode the JWT token to get the user role
-      try {
-        // Simple JWT decoding (base64)
-        const payload = token.split('.')[1];
-        const decodedPayload = JSON.parse(atob(payload));
-        setUserRole(decodedPayload.role || 'student');
-        console.log('User role from token:', decodedPayload.role);
-      } catch (error) {
-        console.error('Error decoding token:', error);
-        // Fallback to checking localStorage for role
-        const storedRole = localStorage.getItem('userRole');
-        setUserRole(storedRole || 'student');
-      }
+      // In a real app, we would decode the token or fetch user data
+      setUserRole('student'); // Default for demo
     }
     setLoading(false);
   }, []);
@@ -114,30 +106,15 @@ function App() {
 
         {/* Main layout routes */}
         <Route element={<MainLayout />}>
-          <Route path="/privacy-policy" element={<React.Suspense fallback={<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}><CircularProgress /></Box>}>
-            {React.createElement(require('./pages/legal/PrivacyPolicy').default)}
-          </React.Suspense>} />
           {/* Public routes */}
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/hiring" element={<Hiring />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/find-teachers" element={<FindTeachers />} />
           <Route path="/teachers/:id" element={<TeacherProfile />} />
           <Route path="/teachers/:id/book" element={<BookTeacher />} />
 
           {/* Student routes */}
-          <Route 
-            path="/student/help" 
-            element={
-              <ProtectedRoute allowedRoles={['student']}>
-                <React.Suspense fallback={<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}><CircularProgress /></Box>}>
-                  {React.createElement(require('./pages/student/Help').default)}
-                </React.Suspense>
-              </ProtectedRoute>
-            } 
-          />
           <Route 
             path="/student/dashboard" 
             element={
@@ -206,22 +183,6 @@ function App() {
           />
 
           {/* Teacher routes */}
-          <Route 
-            path="/teacher/verification-process" 
-            element={
-              <ProtectedRoute allowedRoles={['teacher']}>
-                {React.createElement(require('./pages/VerificationProcess').default)}
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/teacher/verification" 
-            element={
-              <ProtectedRoute allowedRoles={['teacher']}>
-                {React.createElement(require('./pages/teacher/Verification').default)}
-              </ProtectedRoute>
-            } 
-          />
           <Route 
             path="/teacher/dashboard" 
             element={

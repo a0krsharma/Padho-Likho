@@ -6,10 +6,23 @@ const { authorize } = require('../middleware/auth.middleware');
 const router = express.Router();
 
 // Import controller (will implement later)
-const userController = require('../controllers/user.controller');
-
-// Admin: Get all users
-router.get('/', auth, authorize('admin'), userController.getAllUsers);
+const userController = {
+  getUserProfile: (req, res) => {
+    res.json({ message: 'Get user profile endpoint - to be implemented' });
+  },
+  updateUserProfile: (req, res) => {
+    res.json({ message: 'Update user profile endpoint - to be implemented' });
+  },
+  getStudentDashboard: (req, res) => {
+    res.json({ message: 'Get student dashboard endpoint - to be implemented' });
+  },
+  getParentDashboard: (req, res) => {
+    res.json({ message: 'Get parent dashboard endpoint - to be implemented' });
+  },
+  getTeacherDashboard: (req, res) => {
+    res.json({ message: 'Get teacher dashboard endpoint - to be implemented' });
+  }
+};
 
 // Get user profile
 router.get('/profile', auth, userController.getUserProfile);

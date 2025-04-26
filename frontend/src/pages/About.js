@@ -181,17 +181,17 @@ const About = () => {
         <Grid container spacing={4}>
           <Grid item xs={12} sm={6} md={3}>
             <TeamMemberCard 
-              name="Abhishek Kumar"
+              name="Rajesh Kumar"
               role="Founder & CEO"
-              image="/abhishek_kumar.jpg"
-              bio="Graduate from IIT Patna and want to do something big in the education sector. Passionate about making quality education accessible to all."
+              image="https://randomuser.me/api/portraits/men/32.jpg"
+              bio="Former educator with 15 years of experience in the education sector. Passionate about making quality education accessible to all."
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <TeamMemberCard 
               name="Priya Sharma"
               role="Co-Founder & COO"
-              image="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=facearea&w=256&h=256&facepad=2"
+              image="https://randomuser.me/api/portraits/women/44.jpg"
               bio="Education policy expert with a focus on technology integration in learning. Believes in the power of personalized education."
             />
           </Grid>
@@ -199,7 +199,7 @@ const About = () => {
             <TeamMemberCard 
               name="Amit Patel"
               role="CTO"
-              image="https://images.unsplash.com/photo-1519340333755-c2f6c937c2e3?auto=format&fit=facearea&w=256&h=256&facepad=2"
+              image="https://randomuser.me/api/portraits/men/62.jpg"
               bio="Tech enthusiast with expertise in building scalable educational platforms. Committed to creating intuitive learning experiences."
             />
           </Grid>
@@ -207,7 +207,7 @@ const About = () => {
             <TeamMemberCard 
               name="Neha Gupta"
               role="Head of Curriculum"
-              image="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=facearea&w=256&h=256&facepad=2"
+              image="https://randomuser.me/api/portraits/women/68.jpg"
               bio="Curriculum development specialist with a passion for creating engaging and effective learning materials for students of all ages."
             />
           </Grid>

@@ -7,19 +7,18 @@ import {
   Grid, 
   Card, 
   CardContent, 
-
   Avatar, 
   Paper, 
-
-
-
-
-
-
+  Chip, 
   Tabs,
   Tab,
-  Chip
+  Divider,
+  List, 
+  ListItem, 
+  ListItemIcon, 
+  ListItemText
 } from '@mui/material';
+import { useTheme } from '@mui/material';
 import { 
   School as SchoolIcon, 
   Search as SearchIcon, 
@@ -37,22 +36,19 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
-
-
 // Feature card component
 const FeatureCard = ({ icon, title, description }) => (
-  <Card elevation={4} sx={{ height: '100%', display: 'flex', flexDirection: 'column', borderRadius: 4, boxShadow: '0 8px 32px 0 rgba(67,97,238,0.10)', transition: 'transform 0.3s, box-shadow 0.3s', '&:hover': { transform: 'translateY(-8px) scale(1.03)', boxShadow: '0 16px 40px 0 rgba(67,97,238,0.18)' }, bgcolor: 'background.paper', my: 2 }}>
-    <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', p: { xs: 2, md: 4 } }}>
+  <Card elevation={2} sx={{ height: '100%', display: 'flex', flexDirection: 'column', borderRadius: 3, transition: 'transform 0.3s', '&:hover': { transform: 'translateY(-5px)' } }}>
+    <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', p: 3 }}>
       <Box sx={{ 
-        background: 'linear-gradient(135deg, #4361ee 0%, #738eef 100%)', 
+        backgroundColor: 'primary.light', 
         borderRadius: '50%', 
         width: 70, 
         height: 70, 
         display: 'flex', 
         justifyContent: 'center', 
         alignItems: 'center',
-        mb: 2,
-        boxShadow: '0 2px 8px rgba(67,97,238,0.10)'
+        mb: 2
       }}>
         {icon}
       </Box>
@@ -94,19 +90,16 @@ const PricingCard = ({ title, price, description, features, recommended }) => {
   
   return (
     <Card 
-      elevation={recommended ? 12 : 4} 
+      elevation={recommended ? 8 : 2} 
       sx={{ 
         height: '100%', 
         display: 'flex', 
         flexDirection: 'column', 
-        borderRadius: 5,
+        borderRadius: 3,
         position: 'relative',
-        border: recommended ? `2.5px solid ${theme.palette.primary.main}` : 'none',
-        boxShadow: recommended ? '0 12px 32px 0 rgba(67,97,238,0.15)' : '0 6px 18px 0 rgba(67,97,238,0.10)',
-        transition: 'transform 0.3s, box-shadow 0.3s',
-        '&:hover': { transform: 'translateY(-8px) scale(1.03)', boxShadow: '0 20px 40px 0 rgba(67,97,238,0.22)' },
-        bgcolor: 'background.paper',
-        my: 2
+        border: recommended ? `2px solid ${theme.palette.primary.main}` : 'none',
+        transition: 'transform 0.3s',
+        '&:hover': { transform: 'translateY(-5px)' }
       }}
     >
       {recommended && (
@@ -156,7 +149,6 @@ const PricingCard = ({ title, price, description, features, recommended }) => {
           color="primary" 
           fullWidth
           size="large"
-          sx={{ borderRadius: 3, fontWeight: 600, fontSize: '1.1rem', py: 1.5, boxShadow: '0 2px 8px rgba(67,97,238,0.08)', transition: 'background 0.2s', '&:hover': { background: 'linear-gradient(135deg, #4361ee 0%, #738eef 100%)', color: 'white' } }}
           onClick={() => navigate('/register')}
         >
           Get Started
@@ -165,6 +157,46 @@ const PricingCard = ({ title, price, description, features, recommended }) => {
     </Card>
   );
 };
+
+// Subject card component
+const SubjectCard = ({ icon, title, color, onClick }) => (
+  <Paper 
+    elevation={2} 
+    sx={{ 
+      p: 2, 
+      borderRadius: 3, 
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      textAlign: 'center',
+      cursor: 'pointer',
+      transition: 'transform 0.3s, box-shadow 0.3s',
+      '&:hover': { 
+        transform: 'translateY(-5px)',
+        boxShadow: 6
+      }
+    }}
+    onClick={onClick}
+  >
+    <Box sx={{ 
+      color: 'white', 
+      bgcolor: color, 
+      p: 2, 
+      borderRadius: '50%', 
+      mb: 1,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center'
+    }}>
+      {icon}
+    </Box>
+    <Typography variant="subtitle1" sx={{ fontWeight: 'medium' }}>
+      {title}
+    </Typography>
+  </Paper>
+);
 
 const Home = () => {
   const theme = useTheme();
@@ -189,24 +221,6 @@ const Home = () => {
   return (
     <Box>
       {/* Hero Section */}
-      <Box 
-        sx={{ 
-          background: 'linear-gradient(135deg, #e0ecff 0%, #f9f9ff 100%)',
-          py: { xs: 8, md: 12 },
-          textAlign: 'center'
-        }}
-      >
-        <Container maxWidth="md">
-          <Typography variant="h2" fontWeight="bold" gutterBottom>
-            Welcome to Padho Likho
-          </Typography>
-          <Typography variant="h5" color="text.secondary" sx={{ mb: 4 }}>
-            Unlock your child’s potential with India’s best teachers and personalized learning programs.
-          </Typography>
-        </Container>
-      </Box>
-
-
       <Box 
         sx={{ 
           backgroundColor: 'primary.light',
