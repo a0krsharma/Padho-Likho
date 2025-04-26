@@ -34,6 +34,7 @@ import {
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
 import Footer from '../common/Footer';
+import HiringNavbar from '../common/HiringNavbar';
 
 const MainLayout = () => {
   const theme = useTheme();
@@ -132,6 +133,7 @@ const MainLayout = () => {
   
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <HiringNavbar />
       <AppBar position="sticky" color="default" elevation={1}>
         <Toolbar>
           {isMobile && (

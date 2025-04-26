@@ -16,25 +16,30 @@ import {
   ListItemAvatar,
   Paper,
   Chip,
-  Badge
+  Badge,
+  IconButton,
+  Tooltip
 } from '@mui/material';
 import { 
-  Dashboard as DashboardIcon,
-  Class as ClassIcon,
   Assignment as AssignmentIcon,
   Person as PersonIcon,
-  Group as GroupIcon,
-  Assessment as AssessmentIcon,
   Event as EventIcon,
   EventNote as EventNoteIcon,
   Notifications as NotificationsIcon,
-  CalendarToday as CalendarTodayIcon,
+  CalendarToday as CalendarIcon,
   ArrowForward as ArrowForwardIcon,
   Add as AddIcon,
   Message as MessageIcon,
   VideoCall as VideoCallIcon,
   AttachMoney as AttachMoneyIcon,
-  Star as StarIcon
+  Star as StarIcon,
+  AccessTime as TimeIcon,
+  LocationOn as LocationIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  School as SchoolIcon,
+  Book as BookIcon,
+  People as PeopleIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -336,7 +341,7 @@ const TeacherDashboard = () => {
                   </List>
                 ) : (
                   <Box sx={{ textAlign: 'center', py: 4 }}>
-                    <CalendarTodayIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
+                    <CalendarIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
                     <Typography variant="body1" color="text.secondary">
                       No classes scheduled for today
                     </Typography>
@@ -414,7 +419,7 @@ const TeacherDashboard = () => {
               <CardContent>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                   <Typography variant="h6" component="h2" sx={{ display: 'flex', alignItems: 'center' }}>
-                    <CalendarTodayIcon sx={{ mr: 1 }} /> Recent Bookings
+                    <CalendarIcon sx={{ mr: 1 }} /> Recent Bookings
                   </Typography>
                   <Button 
                     endIcon={<ArrowForwardIcon />}
@@ -462,7 +467,7 @@ const TeacherDashboard = () => {
                   </List>
                 ) : (
                   <Box sx={{ textAlign: 'center', py: 4 }}>
-                    <CalendarTodayIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
+                    <CalendarIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
                     <Typography variant="body1" color="text.secondary">
                       No recent bookings
                     </Typography>
@@ -629,7 +634,7 @@ const TeacherDashboard = () => {
                   >
                     <ListItemAvatar>
                       <Avatar sx={{ bgcolor: 'secondary.light' }}>
-                        <CalendarTodayIcon />
+                        <CalendarIcon />
                       </Avatar>
                     </ListItemAvatar>
                     <ListItemText primary="Manage Bookings" />

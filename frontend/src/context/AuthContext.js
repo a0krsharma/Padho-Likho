@@ -108,7 +108,11 @@ export function AuthProvider({ children }) {
         registrationData.experience = userData.experience;
       }
       
+      console.log('Sending registration data:', JSON.stringify(registrationData, null, 2));
+      
       const response = await axios.post('auth/register', registrationData);
+      console.log('Registration response:', response.data);
+      
       const { token, user } = response.data;
       localStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -117,8 +121,18 @@ export function AuthProvider({ children }) {
       return true;
     } catch (err) {
       console.error('Registration error:', err);
-      setError(err.response?.data?.message || 'Registration failed');
+      console.error('Error response:', err.response?.data);
+      
+      // Handle validation errors
+      if (err.response?.data?.errors) {
+        const validationErrors = err.response.data.errors.map(error => error.msg).join(', ');
+        setError(validationErrors || 'Validation failed. Please check your input.');
+      } else {
+        setError(err.response?.data?.message || 'Registration failed');
+      }
       return false;
+    } finally {
+      setLoading(false);
     }
   }
 
