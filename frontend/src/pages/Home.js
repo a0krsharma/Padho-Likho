@@ -85,6 +85,7 @@ const TestimonialCard = ({ name, role, image, testimonial }) => (
 
 // Pricing card component
 const PricingCard = ({ title, price, description, features, recommended }) => {
+  const theme = useTheme();
   
   const navigate = useNavigate();
   
