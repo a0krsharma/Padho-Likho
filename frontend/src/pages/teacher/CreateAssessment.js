@@ -17,21 +17,19 @@ import {
   Step,
   StepLabel,
   Paper,
-  Chip,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-  Checkbox,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  useTheme
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  Checkbox,
+  Chip
 } from '@mui/material';
 import { 
   Assignment as AssignmentIcon,
@@ -41,9 +39,7 @@ import {
   Delete as DeleteIcon,
   Save as SaveIcon,
   Check as CheckIcon,
-  Close as CloseIcon,
-  Person as PersonIcon,
-  School as SchoolIcon
+  Person as PersonIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -58,7 +54,7 @@ const studentsData = [
 
 const CreateAssessment = () => {
   const navigate = useNavigate();
-  const theme = useTheme();
+  
   
   // Stepper state
   const [activeStep, setActiveStep] = useState(0);

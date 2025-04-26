@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-// import Newsletter from '../../components/common/Newsletter';
+import React from 'react';
 
 import { 
   Box, 
@@ -15,30 +14,27 @@ import {
   ListItem,
   ListItemText,
   ListItemAvatar,
-  ListItemIcon,
   Paper,
   Chip,
-  IconButton,
-  Badge,
-  useTheme
+  Badge
 } from '@mui/material';
 import { 
-  School as SchoolIcon,
+  Dashboard as DashboardIcon,
+  Class as ClassIcon,
+  Assignment as AssignmentIcon,
   Person as PersonIcon,
+  Group as GroupIcon,
+  Assessment as AssessmentIcon,
   Event as EventIcon,
   EventNote as EventNoteIcon,
-  Assignment as AssignmentIcon,
   Notifications as NotificationsIcon,
   CalendarToday as CalendarTodayIcon,
   ArrowForward as ArrowForwardIcon,
-  AccessTime as AccessTimeIcon,
-  CheckCircle as CheckCircleIcon,
   Add as AddIcon,
   Message as MessageIcon,
   VideoCall as VideoCallIcon,
   AttachMoney as AttachMoneyIcon,
-  Star as StarIcon,
-  People as PeopleIcon
+  Star as StarIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -152,7 +148,7 @@ const earningsData = {
 
 const TeacherDashboard = () => {
   const navigate = useNavigate();
-  const theme = useTheme();
+  
   
   // Get current date
   const currentDate = new Date().toLocaleDateString('en-US', {
@@ -246,7 +242,7 @@ const TeacherDashboard = () => {
           <Grid item xs={6} md={3}>
             <Card elevation={2} sx={{ borderRadius: 3 }}>
               <CardContent sx={{ textAlign: 'center' }}>
-                <PeopleIcon sx={{ fontSize: 40, color: 'info.main', mb: 1 }} />
+                <PersonIcon sx={{ fontSize: 40, color: 'info.main', mb: 1 }} />
                 <Typography variant="h4" component="div">
                   12
                 </Typography>

@@ -1,38 +1,31 @@
 import React, { useState } from 'react';
-import { 
-  Box, 
-  TextField, 
-  Button, 
-  Typography, 
-  InputAdornment, 
-  IconButton, 
-  Alert, 
-  CircularProgress,
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Grid,
   Link,
+  IconButton,
+  InputAdornment,
+  Alert,
+  CircularProgress,
   FormControl,
   InputLabel,
-  Select,
   MenuItem,
-  FormHelperText,
+  Select,
   Stepper,
   Step,
   StepLabel,
-  Grid,
-  Chip,
-  OutlinedInput,
-  Checkbox,
-  FormControlLabel
+  FormHelperText
 } from '@mui/material';
 import { 
-  Visibility, 
-  VisibilityOff, 
+  Person as PersonIcon, 
   Email as EmailIcon, 
   Lock as LockIcon,
-  Person as PersonIcon,
-  Phone as PhoneIcon,
-  School as SchoolIcon,
-  Home as HomeIcon,
-  LocationCity as LocationIcon
+  Visibility as VisibilityIcon,
+  VisibilityOff as VisibilityOffIcon,
+  Phone as PhoneIcon
 } from '@mui/icons-material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -325,7 +318,7 @@ const Register = () => {
                       onClick={toggleShowPassword}
                       edge="end"
                     >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                      {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
                     </IconButton>
                   </InputAdornment>
                 ),
@@ -358,7 +351,7 @@ const Register = () => {
                       onClick={toggleShowConfirmPassword}
                       edge="end"
                     >
-                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                      {showConfirmPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
                     </IconButton>
                   </InputAdornment>
                 ),
@@ -443,7 +436,7 @@ const Register = () => {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <HomeIcon />
+                    <PersonIcon />
                   </InputAdornment>
                 ),
               }}

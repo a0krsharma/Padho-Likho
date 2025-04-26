@@ -9,7 +9,7 @@ import {
   Grid, 
   Card, 
   CardContent, 
-  CardMedia, 
+  
   Button, 
   Avatar, 
   Chip,

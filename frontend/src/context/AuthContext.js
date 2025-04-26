@@ -36,7 +36,7 @@ export function AuthProvider({ children }) {
   }
 
   // Check user function
-  async function checkUser(token) {
+  const checkUser = React.useCallback(async (token) => {
     try {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       const response = await axios.get('auth/me');
@@ -49,7 +49,7 @@ export function AuthProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
   // Initialize on mount
   React.useEffect(() => {
@@ -59,7 +59,7 @@ export function AuthProvider({ children }) {
     } else {
       setLoading(false);
     }
-  }, []);
+  }, [checkUser]);
 
   // Login function
   async function login(email, password) {

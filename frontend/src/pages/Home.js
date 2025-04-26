@@ -13,10 +13,10 @@ import {
   Tabs,
   Tab,
   Divider,
-  List, 
-  ListItem, 
-  ListItemIcon, 
-  ListItemText
+  
+  
+  
+  
 } from '@mui/material';
 import { useTheme } from '@mui/material';
 import { 
@@ -31,8 +31,8 @@ import {
   Dashboard as DashboardIcon,
   Help as HelpIcon,
   Class as ClassIcon,
-  Verified as VerifiedIcon,
   ArrowForward as ArrowForwardIcon,
+  Verified as VerifiedIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -160,7 +160,7 @@ const PricingCard = ({ title, price, description, features, recommended }) => {
 };
 
 // Subject card component
-const SubjectCard = ({ icon, title, color, onClick }) => (
+/* const SubjectCard = ({ icon, title, color, onClick }) => (
   <Paper 
     elevation={2} 
     sx={{ 
@@ -197,17 +197,67 @@ const SubjectCard = ({ icon, title, color, onClick }) => (
       {title}
     </Typography>
   </Paper>
-);
+); */
 
 const Home = () => {
   
   const navigate = useNavigate();
   
   // State for quick booking widget
-  const [bookingClass, setBookingClass] = useState('');
-  const [bookingSubject, setBookingSubject] = useState('');
-  const [bookingDate, setBookingDate] = useState('');
-  const [bookingTime, setBookingTime] = useState('');
+  const [bookingData, setBookingData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    subject: '',
+    class: '',
+    language: ''
+  });
+  
+  const handleBookingSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Please login to make a booking');
+      }
+
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(bookingData),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Booking failed');
+      }
+      
+      // Show success message or redirect
+      alert('Booking successful! We will contact you shortly.');
+      setBookingData({
+        name: '',
+        email: '',
+        phone: '',
+        subject: '',
+        class: '',
+        language: ''
+      });
+    } catch (error) {
+      console.error('Booking error:', error);
+      alert(error.message || 'Booking failed. Please try again.');
+    }
+  };
+
+  const handleBookingChange = (e) => {
+    const { name, value } = e.target;
+    setBookingData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
   
   // State for pricing plan selection
   const [selectedPlan, setSelectedPlan] = useState(1);
@@ -325,28 +375,34 @@ const Home = () => {
               Book a Free Trial Class
             </Typography>
             <Typography variant="subtitle1" align="center" color="text.secondary" sx={{ mb: 4 }}>
-              Start your child’s journey to academic excellence! Simply fill out the form below to book your free trial class.
+              Start your child's journey to academic excellence! Simply fill out the form below to book your free trial class.
             </Typography>
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-              <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" style={{ width: '100%', maxWidth: 400 }}>
-  <input type="hidden" name="form-name" value="contact" />
-  <input type="hidden" name="bot-field" />
-                <input type="hidden" name="form-name" value="contact" />
+              <form 
+                name="trial-booking" 
+                method="POST" 
+                data-netlify="true"
+                data-netlify-honeypot="bot-field"
+                onSubmit={handleBookingSubmit}
+                style={{ width: '100%', maxWidth: 400 }}
+              >
+                <input type="hidden" name="form-name" value="trial-booking" />
+                <input type="hidden" name="bot-field" />
                 <p>
-                  <label>Name <input type="text" name="name" required style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc', marginTop: 4 }} /></label>
+                  <label>Name <input type="text" name="name" required value={bookingData.name} onChange={handleBookingChange} style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc', marginTop: 4 }} /></label>
                 </p>
                 <p>
-                  <label>Email <input type="email" name="email" required style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc', marginTop: 4 }} /></label>
+                  <label>Email <input type="email" name="email" required value={bookingData.email} onChange={handleBookingChange} style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc', marginTop: 4 }} /></label>
                 </p>
                 <p>
-                  <label>Phone Number <input type="tel" name="phone" required maxLength="15" style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc', marginTop: 4 }} /></label>
+                  <label>Phone Number <input type="tel" name="phone" required value={bookingData.phone} onChange={handleBookingChange} maxLength="15" style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc', marginTop: 4 }} /></label>
                 </p>
                 <p>
-                  <label>Subject <input type="text" name="subject" required style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc', marginTop: 4 }} placeholder="e.g. Math, Science" /></label>
+                  <label>Subject <input type="text" name="subject" required value={bookingData.subject} onChange={handleBookingChange} style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc', marginTop: 4 }} placeholder="e.g. Math, Science" /></label>
                 </p>
                 <p>
                   <label>Class
-                    <select name="class" required style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc', marginTop: 4 }}>
+                    <select name="class" required value={bookingData.class} onChange={handleBookingChange} style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc', marginTop: 4 }}>
                       <option value="">Select Class</option>
                       <option value="1">1</option>
                       <option value="2">2</option>
@@ -363,7 +419,7 @@ const Home = () => {
                 </p>
                 <p>
                   <label>Language
-                    <select name="language" required style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc', marginTop: 4 }}>
+                    <select name="language" required value={bookingData.language} onChange={handleBookingChange} style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc', marginTop: 4 }}>
                       <option value="">Select Language</option>
                       <option value="English">English</option>
                       <option value="Hindi">Hindi</option>

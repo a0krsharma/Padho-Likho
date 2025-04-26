@@ -285,7 +285,7 @@ const Assessments = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSubject, setSelectedSubject] = useState('all');
   const [isLoading, setIsLoading] = useState(false);
-  const [showTakeAssessmentDialog, setShowTakeAssessmentDialog] = useState(false);
+  
   const [currentAssessment, setCurrentAssessment] = useState(null);
   
   // Filter assessments based on tab, search term, and subject filter
@@ -323,7 +323,6 @@ const Assessments = () => {
   
   const handleTakeAssessment = (assessment) => {
     setCurrentAssessment(assessment);
-    setShowTakeAssessmentDialog(true);
     
     // Simulate loading
     setIsLoading(true);

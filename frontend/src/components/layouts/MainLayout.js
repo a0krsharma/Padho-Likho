@@ -22,15 +22,14 @@ import {
 } from '@mui/material';
 import {
   Menu as MenuIcon,
+  Dashboard as DashboardIcon,
+  School as SchoolIcon,
   Person as PersonIcon,
+  ExitToApp as LogoutIcon,
   Info as InfoIcon,
   ContactSupport as ContactIcon,
-  Dashboard as DashboardIcon,
-  Logout as LogoutIcon,
   Login as LoginIcon,
-  Help as HelpIcon,
   Home as HomeIcon,
-  School as SchoolIcon,
   PersonAdd as RegisterIcon
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
