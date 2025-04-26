@@ -50,21 +50,7 @@ import ChildProgress from './pages/parent/ChildProgress';
 // Context
 import { AuthProvider } from './context/AuthContext';
 
-// Placeholder components for pages we haven't created yet
-const PlaceholderComponent = ({ title }) => (
-  <Box 
-    sx={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      height: '80vh',
-      flexDirection: 'column'
-    }}
-  >
-    <h1>{title}</h1>
-    <p>This page is under construction</p>
-  </Box>
-);
+
 
 // Protected route component
 const ProtectedRoute = ({ children, allowedRoles }) => {

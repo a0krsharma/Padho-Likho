@@ -5,12 +5,7 @@ import {
   Typography,
   TextField,
   IconButton,
-  Avatar,
   Divider,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
   InputAdornment,
   CircularProgress,
   Tooltip,
@@ -24,7 +19,7 @@ import {
   Image as ImageIcon,
   PictureAsPdf as PdfIcon
 } from '@mui/icons-material';
-import UserAvatar from './UserAvatar';
+import User from './User';
 
 /**
  * A reusable chat component
@@ -168,7 +163,7 @@ const Chat = ({
           borderColor: 'divider'
         }}
       >
-        <UserAvatar 
+        <User 
           name={recipient.name} 
           src={recipient.avatar} 
           role={recipient.role}
@@ -249,7 +244,7 @@ const Chat = ({
                     }}
                   >
                     {!isCurrentUser && (
-                      <UserAvatar 
+                      <User 
                         name={message.senderName || recipient.name} 
                         src={message.senderAvatar || recipient.avatar} 
                         role={recipient.role}
@@ -339,7 +334,7 @@ const Chat = ({
               mb: 1.5
             }}
           >
-            <UserAvatar 
+            <User 
               name={recipient.name} 
               src={recipient.avatar} 
               role={recipient.role}

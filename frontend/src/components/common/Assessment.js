@@ -79,7 +79,7 @@ const Assessment = ({
       
       return () => clearInterval(newTimer);
     }
-  }, [assessment, editable, submitted]);
+  }, [assessment, editable, submitted, handleSubmit, timer]);
   
   // Format time remaining
   const formatTimeRemaining = () => {
