@@ -216,26 +216,24 @@ const Home = () => {
   const handleBookingSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('Please login to make a booking');
-      }
+      // Create form data
+      const formData = new FormData();
+      formData.append('form-name', 'trial-booking');
+      Object.keys(bookingData).forEach(key => {
+        formData.append(key, bookingData[key]);
+      });
 
-      const response = await fetch('/api/bookings', {
+      // Submit to Netlify
+      const response = await fetch('/', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(bookingData),
+        body: formData,
       });
       
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Booking failed');
+        throw new Error('Booking failed');
       }
       
-      // Show success message or redirect
+      // Show success message
       alert('Booking successful! We will contact you shortly.');
       setBookingData({
         name: '',
@@ -247,7 +245,7 @@ const Home = () => {
       });
     } catch (error) {
       console.error('Booking error:', error);
-      alert(error.message || 'Booking failed. Please try again.');
+      alert('Booking failed. Please try again.');
     }
   };
 
@@ -378,60 +376,18 @@ const Home = () => {
               Start your child's journey to academic excellence! Simply fill out the form below to book your free trial class.
             </Typography>
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-              <form 
-                name="trial-booking" 
-                method="POST" 
-                data-netlify="true"
-                data-netlify-honeypot="bot-field"
-                onSubmit={handleBookingSubmit}
-                style={{ width: '100%', maxWidth: 400 }}
+              <iframe 
+                src="https://docs.google.com/forms/d/e/1FAIpQLSd8b9hh4r1xZpohp_xOqFXgwNGMldLoXfHKqS76nQ2N8o6RTQ/viewform?embedded=true" 
+                width="100%" 
+                height="800" 
+                frameBorder="0" 
+                marginHeight="0" 
+                marginWidth="0"
+                title="Book Free Trial Class Form"
+                style={{ maxWidth: '600px', borderRadius: '8px' }}
               >
-                <input type="hidden" name="form-name" value="trial-booking" />
-                <input type="hidden" name="bot-field" />
-                <p>
-                  <label>Name <input type="text" name="name" required value={bookingData.name} onChange={handleBookingChange} style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc', marginTop: 4 }} /></label>
-                </p>
-                <p>
-                  <label>Email <input type="email" name="email" required value={bookingData.email} onChange={handleBookingChange} style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc', marginTop: 4 }} /></label>
-                </p>
-                <p>
-                  <label>Phone Number <input type="tel" name="phone" required value={bookingData.phone} onChange={handleBookingChange} maxLength="15" style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc', marginTop: 4 }} /></label>
-                </p>
-                <p>
-                  <label>Subject <input type="text" name="subject" required value={bookingData.subject} onChange={handleBookingChange} style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc', marginTop: 4 }} placeholder="e.g. Math, Science" /></label>
-                </p>
-                <p>
-                  <label>Class
-                    <select name="class" required value={bookingData.class} onChange={handleBookingChange} style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc', marginTop: 4 }}>
-                      <option value="">Select Class</option>
-                      <option value="1">1</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4</option>
-                      <option value="5">5</option>
-                      <option value="6">6</option>
-                      <option value="7">7</option>
-                      <option value="8">8</option>
-                      <option value="9">9</option>
-                      <option value="10">10</option>
-                    </select>
-                  </label>
-                </p>
-                <p>
-                  <label>Language
-                    <select name="language" required value={bookingData.language} onChange={handleBookingChange} style={{ width: '100%', padding: 8, borderRadius: 4, border: '1px solid #ccc', marginTop: 4 }}>
-                      <option value="">Select Language</option>
-                      <option value="English">English</option>
-                      <option value="Hindi">Hindi</option>
-                      <option value="Hinglish">Hinglish</option>
-                      <option value="Other">Other</option>
-                    </select>
-                  </label>
-                </p>
-                <p>
-                  <button type="submit" style={{ padding: '10px 24px', borderRadius: 4, background: '#4361ee', color: 'white', border: 'none', fontWeight: 'bold', fontSize: 16, cursor: 'pointer' }}>Book</button>
-                </p>
-              </form>
+                Loading...
+              </iframe>
             </Box>
           </Paper>
         </Container>

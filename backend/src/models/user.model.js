@@ -99,10 +99,22 @@ const userSchema = new mongoose.Schema({
     }],
     languages: [String],
     hourlyRate: {
-      individual: Number, // 1:1 - ₹2999
-      twoStudents: Number, // 1:2 - ₹1499
-      fiveStudents: Number, // 1:5 - ₹599
-      tenStudents: Number // 1:10 - ₹299
+      individual: {
+        type: Number,
+        default: 2999
+      },
+      twoStudents: {
+        type: Number,
+        default: 1499
+      },
+      fiveStudents: {
+        type: Number,
+        default: 599
+      },
+      tenStudents: {
+        type: Number,
+        default: 299
+      }
     },
     availability: [{
       day: {

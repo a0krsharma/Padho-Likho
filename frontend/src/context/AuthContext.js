@@ -5,6 +5,10 @@ import axios from 'axios';
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://padho-likho-4ky2.onrender.com/api';
 axios.defaults.baseURL = API_BASE_URL;
 
+// Configure axios defaults
+axios.defaults.withCredentials = true;
+axios.defaults.headers.common['Content-Type'] = 'application/json';
+
 // Create context first
 const AuthContext = React.createContext();
 
@@ -39,7 +43,7 @@ export function AuthProvider({ children }) {
   const checkUser = React.useCallback(async (token) => {
     try {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      const response = await axios.get('auth/me');
+      const response = await axios.get('/auth/me');
       setCurrentUser(response.data.user);
       setError(null);
     } catch (err) {
@@ -65,7 +69,7 @@ export function AuthProvider({ children }) {
   async function login(email, password) {
     try {
       setLoading(true);
-      const response = await axios.post('auth/login', { email, password });
+      const response = await axios.post('/auth/login', { email, password });
       const { token, user } = response.data;
       localStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -110,7 +114,7 @@ export function AuthProvider({ children }) {
       
       console.log('Sending registration data:', JSON.stringify(registrationData, null, 2));
       
-      const response = await axios.post('auth/register', registrationData);
+      const response = await axios.post('/auth/register', registrationData);
       console.log('Registration response:', response.data);
       
       const { token, user } = response.data;
@@ -136,80 +140,6 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Add getCurrentUser method to context value
-  // Get current user with robust error handling (no forced logout on minor errors)
-  const getCurrentUser = React.useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setCurrentUser(null);
-        setError('You are not logged in. Please login again.');
-        return null;
-      }
-      await checkUser(token);
-      // Do not force logout here; just return null if not found
-      return currentUser;
-    } catch (err) {
-      // Only clear auth if token truly invalid
-      setCurrentUser(null);
-      setError('Unable to fetch user profile. Please login again.');
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  }, [checkUser, currentUser]);
-
-  // Update profile function
-  async function updateProfile(userData) {
-    try {
-      setLoading(true);
-      const response = await axios.put('users/profile', userData);
-      setCurrentUser(response.data.user);
-      setError(null);
-      return response.data.user;
-    } catch (err) {
-      console.error('Update profile error:', err);
-      setError(err.response?.data?.message || 'Failed to update profile');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // Forgot password function
-  async function forgotPassword(email) {
-    try {
-      setLoading(true);
-      const response = await axios.post('auth/forgot-password', { email });
-      setError(null);
-      return response.data;
-    } catch (err) {
-      console.error('Forgot password error:', err);
-      setError(err.response?.data?.message || 'Failed to process request');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // Reset password function
-  async function resetPassword(token, newPassword) {
-    try {
-      setLoading(true);
-      const response = await axios.post('auth/reset-password', { token, newPassword });
-      setError(null);
-      return response.data;
-    } catch (err) {
-      console.error('Reset password error:', err);
-      setError(err.response?.data?.message || 'Failed to reset password');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }
-
   // Create value object
   const value = {
     currentUser,
@@ -217,14 +147,9 @@ export function AuthProvider({ children }) {
     error,
     login,
     register,
-    getCurrentUser,
-    logout,
-    updateProfile,
-    forgotPassword,
-    resetPassword
+    logout
   };
 
-  // Return provider
   return (
     <AuthContext.Provider value={value}>
       {children}

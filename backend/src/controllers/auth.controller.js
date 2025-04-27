@@ -78,9 +78,16 @@ exports.register = async (req, res) => {
       };
       console.log('Teacher details:', userData.teacherDetails);
     } else if (role === 'student') {
+      // Flatten the subjects array if it's nested
+      const flattenedSubjects = Array.isArray(subjects) 
+        ? subjects.flat() 
+        : subjects 
+          ? [subjects]
+          : [];
+      
       userData.studentDetails = {
         class: classGrade ? Number(classGrade) : 1,
-        subjects: Array.isArray(subjects) ? subjects : (subjects ? [subjects] : [])
+        subjects: flattenedSubjects
       };
       console.log('Student details:', userData.studentDetails);
     } else if (role === 'parent') {
