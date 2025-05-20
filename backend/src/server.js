@@ -14,7 +14,7 @@ const bookingRoutes = require('./routes/booking.routes');
 const classRoutes = require('./routes/class.routes');
 const assessmentRoutes = require('./routes/assessment.routes');
 const paymentRoutes = require('./routes/payment.routes');
-const dashboardRoutes = require('./routes/dashboard.routes');
+// const dashboardRoutes = require('./routes/dashboard.routes'); // Temporarily commented out
 
 // Load environment variables
 dotenv.config();
@@ -75,7 +75,7 @@ app.use('/api/bookings', bookingRoutes);
 app.use('/api/classes', classRoutes);
 app.use('/api/assessments', assessmentRoutes);
 app.use('/api/payments', paymentRoutes);
-app.use('/api/dashboard', dashboardRoutes);
+// app.use('/api/dashboard', dashboardRoutes); // Temporarily commented out
 
 // Import error handling middleware
 const errorHandler = require('./middleware/error.middleware');
