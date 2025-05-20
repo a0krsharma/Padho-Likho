@@ -14,6 +14,7 @@ const bookingRoutes = require('./routes/booking.routes');
 const classRoutes = require('./routes/class.routes');
 const assessmentRoutes = require('./routes/assessment.routes');
 const paymentRoutes = require('./routes/payment.routes');
+const dashboardRoutes = require('./routes/dashboard.routes');
 
 // Load environment variables
 dotenv.config();
@@ -31,6 +32,7 @@ const io = socketIo(server, {
 // Middleware
 const allowedOrigins = [
   'https://padho-likho.netlify.app',
+  'https://padholikho.app',
   'http://localhost:3000',
   'http://localhost:3001'
 ];
@@ -73,6 +75,7 @@ app.use('/api/bookings', bookingRoutes);
 app.use('/api/classes', classRoutes);
 app.use('/api/assessments', assessmentRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // Import error handling middleware
 const errorHandler = require('./middleware/error.middleware');
