@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Box, CircularProgress, Typography } from '@mui/material';
+import { useAuth } from './context/AuthContext';
+import jwt_decode from 'jwt-decode';
 
 // Layout components
 import MainLayout from './components/layouts/MainLayout';
@@ -67,8 +69,6 @@ const TakeAssessment = () => <PlaceholderComponent title="Take Assessment" />;
 
 
 // Protected route component
-import { useAuth } from './context/AuthContext';
-import jwt_decode from 'jwt-decode';
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { currentUser } = useAuth();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
