@@ -39,7 +39,6 @@ const teachersData = [
   {
     id: 1,
     name: 'Rajesh Kumar',
-    image: 'https://randomuser.me/api/portraits/men/32.jpg',
     subjects: ['Mathematics', 'Physics'],
     classes: [9, 10],
     experience: 8,
@@ -62,7 +61,7 @@ const teachersData = [
     teachingApproach: 'I believe in a student-centered approach that focuses on understanding concepts rather than memorization. I use real-world examples and visual aids to make learning engaging and effective.',
     reviews: [
       { id: 1, name: 'Amit Singh', rating: 5, comment: 'Excellent teacher! My son improved his math score from C to A in just 3 months.', date: '2023-02-15' },
-      { id: 2, name: 'Priya Sharma', rating: 5, comment: 'Very patient and explains complex concepts in a simple way.', date: '2023-01-10' },
+      { id: 2, name: 'Amara Kumari', rating: 5, comment: 'Very patient and explains complex concepts in a simple way.', date: '2023-01-10' },
       { id: 3, name: 'Rahul Verma', rating: 4, comment: 'Good teaching style. Helped me prepare for my board exams.', date: '2022-12-05' }
     ]
   }
@@ -100,15 +99,20 @@ const TeacherProfile = () => {
         <Container maxWidth="lg">
           <Grid container spacing={4} alignItems="center">
             <Grid item xs={12} md={3} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-              <Avatar 
-                src={teacher.image} 
+              <Box 
                 sx={{ 
                   width: { xs: 120, md: 150 }, 
                   height: { xs: 120, md: 150 }, 
                   mx: { xs: 'auto', md: 0 },
-                  border: '4px solid white'
-                }} 
-              />
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  borderRadius: '50%'
+                }}
+              >
+                <PersonIcon sx={{ fontSize: 60, color: 'white' }} />
+              </Box>
             </Grid>
             <Grid item xs={12} md={9}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: { xs: 'center', md: 'flex-start' } }}>

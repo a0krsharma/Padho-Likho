@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Box, 
   Container, 
@@ -33,8 +33,10 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
-// Sample booking data
-const bookingsData = [
+import axios from 'axios';
+
+// MyBookings will fetch bookings from the backend API
+const mockBookings = [
   {
     id: 1,
     subject: 'Mathematics',
@@ -42,7 +44,7 @@ const bookingsData = [
     teacher: {
       id: 1,
       name: 'Rajesh Kumar',
-      image: 'https://randomuser.me/api/portraits/men/32.jpg'
+      image: 'https://randomuser.me/api/portraits/men/48.jpg'
     },
     date: '2025-04-10',
     time: '4:00 PM - 5:00 PM',
@@ -69,8 +71,8 @@ const bookingsData = [
     topic: 'Essay Writing',
     teacher: {
       id: 2,
-      name: 'Priya Sharma',
-      image: 'https://randomuser.me/api/portraits/women/44.jpg'
+      name: 'Amara Kumari',
+      image: 'https://randomuser.me/api/portraits/women/17.jpg'
     },
     date: '2025-04-03',
     time: '3:00 PM - 4:00 PM',
@@ -84,7 +86,7 @@ const bookingsData = [
     teacher: {
       id: 1,
       name: 'Rajesh Kumar',
-      image: 'https://randomuser.me/api/portraits/men/32.jpg'
+      image: 'https://randomuser.me/api/portraits/men/48.jpg'
     },
     date: '2025-03-28',
     time: '4:00 PM - 5:00 PM',
@@ -98,7 +100,7 @@ const bookingsData = [
     teacher: {
       id: 3,
       name: 'Amit Patel',
-      image: 'https://randomuser.me/api/portraits/men/62.jpg'
+      image: '/images/profile-image.jpg'
     },
     date: '2025-03-20',
     time: '6:00 PM - 7:30 PM',
@@ -149,7 +151,23 @@ const BookingCard = ({ booking, onViewDetails, onCancel, onReschedule }) => {
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} sm={7}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Avatar src={booking.teacher.image} sx={{ mr: 2 }} />
+              <Box 
+                sx={{ 
+                  width: 40, 
+                  height: 40, 
+                  borderRadius: '50%',
+                  backgroundColor: 'primary.light',
+                  color: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  mr: 2,
+                  fontWeight: 'bold',
+                  fontSize: '1rem'
+                }}
+              >
+                {booking.teacher?.name ? booking.teacher.name.split(' ').map(n => n[0]).join('') : ''}
+              </Box>
               <Box>
                 <Typography variant="subtitle1" sx={{ fontWeight: 'medium' }}>
                   {booking.subject}: {booking.topic}
@@ -234,55 +252,75 @@ const MyBookings = () => {
   const [cancelReason, setCancelReason] = useState('');
   const [rescheduleDate, setRescheduleDate] = useState('');
   const [rescheduleTime, setRescheduleTime] = useState('');
-  
+
+  // New: API data state
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        setLoading(true);
+        setError('');
+        const res = await axios.get('/api/bookings');
+        setBookings(res.data.bookings || []);
+      } catch (err) {
+        console.log('Using mock data due to API error:', err);
+        setBookings(mockBookings);
+        setError('');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBookings();
+  }, []);
+
   // Filter bookings based on tab
-  const filteredBookings = bookingsData.filter(booking => {
+  const filteredBookings = bookings.filter(booking => {
     if (tabValue === 0) return true; // All bookings
     if (tabValue === 1) return booking.status === 'upcoming';
     if (tabValue === 2) return booking.status === 'completed';
     if (tabValue === 3) return booking.status === 'cancelled';
     return true;
   });
-  
+
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
-  
+
   const handleViewDetails = (booking) => {
-    navigate(`/student/bookings/${booking.id}`);
+    navigate(`/student/bookings/${booking._id || booking.id}`);
   };
-  
+
   const handleCancel = (booking) => {
     setSelectedBooking(booking);
     setCancelDialogOpen(true);
   };
-  
+
   const handleReschedule = (booking) => {
     setSelectedBooking(booking);
     setRescheduleDialogOpen(true);
   };
-  
+
   const handleCancelConfirm = () => {
-    // In a real application, this would send a request to the backend
-    console.log('Cancelling booking:', selectedBooking.id, 'Reason:', cancelReason);
+    // TODO: Implement cancel booking API call
     setCancelDialogOpen(false);
     setCancelReason('');
-    // Update booking status in UI (in a real app, this would be done after API response)
-    // For now, we'll just show a success message
     alert('Booking cancelled successfully');
   };
-  
+
   const handleRescheduleConfirm = () => {
-    // In a real application, this would send a request to the backend
-    console.log('Rescheduling booking:', selectedBooking.id, 'New date:', rescheduleDate, 'New time:', rescheduleTime);
+    // TODO: Implement reschedule booking API call
     setRescheduleDialogOpen(false);
     setRescheduleDate('');
     setRescheduleTime('');
-    // Update booking in UI (in a real app, this would be done after API response)
-    // For now, we'll just show a success message
     alert('Booking rescheduled successfully');
   };
-  
+
+  if (loading) return <Box sx={{ p: 4, textAlign: 'center' }}>Loading...</Box>;
+  if (error) return <Box sx={{ p: 4, textAlign: 'center', color: 'red' }}>{error}</Box>;
+
   return (
     <Box>
       {/* Header Section */}
@@ -359,7 +397,7 @@ const MyBookings = () => {
             <Card elevation={2} sx={{ borderRadius: 3, bgcolor: 'primary.light', color: 'white' }}>
               <CardContent sx={{ textAlign: 'center' }}>
                 <Typography variant="h3" component="div">
-                  {bookingsData.filter(b => b.status === 'upcoming').length}
+                  {bookings.length > 0 ? bookings.filter(b => b.status === 'upcoming').length : mockBookings.filter(b => b.status === 'upcoming').length}
                 </Typography>
                 <Typography variant="body1">
                   Upcoming Sessions
@@ -371,7 +409,7 @@ const MyBookings = () => {
             <Card elevation={2} sx={{ borderRadius: 3, bgcolor: 'success.light', color: 'white' }}>
               <CardContent sx={{ textAlign: 'center' }}>
                 <Typography variant="h3" component="div">
-                  {bookingsData.filter(b => b.status === 'completed').length}
+                  {bookings.length > 0 ? bookings.filter(b => b.status === 'completed').length : mockBookings.filter(b => b.status === 'completed').length}
                 </Typography>
                 <Typography variant="body1">
                   Completed Sessions
@@ -383,7 +421,7 @@ const MyBookings = () => {
             <Card elevation={2} sx={{ borderRadius: 3, bgcolor: 'error.light', color: 'white' }}>
               <CardContent sx={{ textAlign: 'center' }}>
                 <Typography variant="h3" component="div">
-                  {bookingsData.filter(b => b.status === 'cancelled').length}
+                  {bookings.length > 0 ? bookings.filter(b => b.status === 'cancelled').length : mockBookings.filter(b => b.status === 'cancelled').length}
                 </Typography>
                 <Typography variant="body1">
                   Cancelled Sessions
@@ -395,7 +433,7 @@ const MyBookings = () => {
             <Card elevation={2} sx={{ borderRadius: 3, bgcolor: 'warning.light', color: 'white' }}>
               <CardContent sx={{ textAlign: 'center' }}>
                 <Typography variant="h3" component="div">
-                  ₹{bookingsData.reduce((total, booking) => total + booking.price, 0)}
+                  ₹{bookings.length > 0 ? bookings.reduce((total, booking) => total + booking.price, 0) : mockBookings.reduce((total, booking) => total + booking.price, 0)}
                 </Typography>
                 <Typography variant="body1">
                   Total Spent

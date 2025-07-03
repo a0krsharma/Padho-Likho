@@ -76,16 +76,29 @@ const Contact = () => {
     e.preventDefault();
     
     if (validateForm()) {
-      // In a real application, this would send the form data to the backend
-      console.log('Form submitted:', formData);
-      setSubmitted(true);
-      
-      // Reset form
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: ''
+      const form = e.target;
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          'form-name': 'contact',
+          ...formData
+        }).toString()
+      })
+      .then(() => {
+        console.log('Form successfully submitted');
+        setSubmitted(true);
+        // Reset form
+        setFormData({
+          name: '',
+          email: '',
+          subject: '',
+          message: ''
+        });
+      })
+      .catch((error) => {
+        console.error('Form submission error:', error);
+        alert('There was an error submitting the form. Please try again.');
       });
     }
   };
@@ -153,7 +166,7 @@ const Contact = () => {
                     Email
                   </Typography>
                   <Typography variant="body1">
-                    support@padholikho.com, a0krsharma@gmail.com
+                    padholikho.contact@gmail.com
                   </Typography>
                 </Box>
               </Box>
@@ -176,7 +189,7 @@ const Contact = () => {
                     Phone
                   </Typography>
                   <Typography variant="body1">
-                    +91 7070253050
+                    +91 8294331885
                   </Typography>
                 </Box>
               </Box>
@@ -226,7 +239,24 @@ const Contact = () => {
               </Typography>
               <Divider sx={{ width: 100, mb: 4, borderColor: 'primary.main', borderWidth: 2 }} />
               
-              <Box component="form" onSubmit={handleSubmit} noValidate>
+              <Box 
+                component="form" 
+                name="contact" 
+                method="POST" 
+                data-netlify="true"
+                onSubmit={handleSubmit} 
+                noValidate
+                sx={{ '& .hidden': { display: 'none' } }}
+              >
+                {/* Netlify Form Name */}
+                <input type="hidden" name="form-name" value="contact" />
+                
+                {/* Honeypot field to catch spam bots */}
+                <div className="hidden">
+                  <label>
+                    Don't fill this out if you're human: <input name="bot-field" />
+                  </label>
+                </div>
                 <Grid container spacing={3}>
                   <Grid item xs={12} sm={6}>
                     <TextField
@@ -239,6 +269,9 @@ const Contact = () => {
                       onChange={handleChange}
                       error={Boolean(errors.name)}
                       helperText={errors.name}
+                      inputProps={{
+                        'aria-label': 'Your Name'
+                      }}
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
@@ -253,6 +286,9 @@ const Contact = () => {
                       onChange={handleChange}
                       error={Boolean(errors.email)}
                       helperText={errors.email}
+                      inputProps={{
+                        'aria-label': 'Email Address'
+                      }}
                     />
                   </Grid>
                   <Grid item xs={12}>
@@ -266,6 +302,9 @@ const Contact = () => {
                       onChange={handleChange}
                       error={Boolean(errors.subject)}
                       helperText={errors.subject}
+                      inputProps={{
+                        'aria-label': 'Subject'
+                      }}
                     />
                   </Grid>
                   <Grid item xs={12}>
@@ -281,6 +320,9 @@ const Contact = () => {
                       onChange={handleChange}
                       error={Boolean(errors.message)}
                       helperText={errors.message}
+                      inputProps={{
+                        'aria-label': 'Your Message'
+                      }}
                     />
                   </Grid>
                 </Grid>

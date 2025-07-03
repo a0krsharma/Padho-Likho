@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Container, Typography, Grid, Accordion, AccordionSummary, AccordionDetails, TextField, Button, Divider, Paper, List, ListItem, ListItemIcon, ListItemText, Tab, Tabs } from '@mui/material';
+import { Box, Container, Typography, Grid, Accordion, AccordionSummary, AccordionDetails, TextField, Button, Divider, Paper, List, ListItem, ListItemIcon, ListItemText, Tab, Tabs, Card, CardContent } from '@mui/material';
 import { 
   ExpandMore as ExpandMoreIcon,
   School as SchoolIcon,
@@ -44,6 +44,26 @@ const StudentHelp = () => {
     {
       question: "How do I contact my teacher outside of class?",
       answer: "You can message your teacher through the messaging system available in your dashboard. Go to 'My Teachers' and select the teacher you want to contact."
+    },
+    {
+      question: "How do I reset my password?",
+      answer: "Go to the Login page and click on 'Forgot Password'. Follow the instructions to reset your password via email."
+    },
+    {
+      question: "How do I update my profile information?",
+      answer: "Navigate to your Student Dashboard and click on 'Profile'. You can edit your personal information and save the changes."
+    },
+    {
+      question: "Who do I contact for technical support?",
+      answer: "If you face any technical issues, use the 'Contact Support' tab and use the 'Mail for Help' button to email a0krsharma@gmail.com."
+    },
+    {
+      question: "How do I view my class schedule?",
+      answer: "Your upcoming classes are listed on your dashboard homepage. You can also view the calendar for a detailed schedule."
+    },
+    {
+      question: "Can I download study materials?",
+      answer: "Yes, go to the 'Resources' tab in the Help Center to access and download study guides and materials."
     }
   ];
 
@@ -236,7 +256,20 @@ const StudentHelp = () => {
                         </ListItemIcon>
                         <ListItemText 
                           primary="Email" 
-                          secondary="support@padholikho.com" 
+                          secondary={
+                            <>
+                              a0krsharma@gmail.com
+                              <Button
+                                component="a"
+                                href="mailto:a0krsharma@gmail.com?subject=Student%20Help%20Request"
+                                variant="outlined"
+                                size="small"
+                                sx={{ ml: 2 }}
+                              >
+                                Mail for Help
+                              </Button>
+                            </>
+                          }
                         />
                       </ListItem>
                       <Divider component="li" />

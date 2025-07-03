@@ -52,7 +52,7 @@ const classesData = [
     teacher: {
       id: 1,
       name: 'Rajesh Kumar',
-      image: 'https://randomuser.me/api/portraits/men/32.jpg'
+      image: 'https://randomuser.me/api/portraits/men/48.jpg'
     },
     date: '2025-04-10',
     time: '4:00 PM - 5:00 PM',
@@ -91,8 +91,8 @@ const classesData = [
     topic: 'Essay Writing',
     teacher: {
       id: 2,
-      name: 'Priya Sharma',
-      image: 'https://randomuser.me/api/portraits/women/44.jpg'
+      name: 'Amara Kumari',
+      image: 'https://randomuser.me/api/portraits/women/17.jpg'
     },
     date: '2025-04-03',
     time: '3:00 PM - 4:00 PM',
@@ -113,7 +113,7 @@ const classesData = [
     teacher: {
       id: 1,
       name: 'Rajesh Kumar',
-      image: 'https://randomuser.me/api/portraits/men/32.jpg'
+      image: 'https://randomuser.me/api/portraits/men/48.jpg'
     },
     date: '2025-03-28',
     time: '4:00 PM - 5:00 PM',
@@ -134,7 +134,7 @@ const classesData = [
     teacher: {
       id: 3,
       name: 'Amit Patel',
-      image: 'https://randomuser.me/api/portraits/men/62.jpg'
+      image: '/images/profile-image.jpg'
     },
     date: '2025-03-20',
     time: '6:00 PM - 7:30 PM',
@@ -192,7 +192,23 @@ const ClassCard = ({ classItem, onJoin, onViewDetails, onFeedback }) => {
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} sm={7}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Avatar src={classItem.teacher.image} sx={{ mr: 2 }} />
+              <Box 
+                sx={{ 
+                  width: 40, 
+                  height: 40, 
+                  borderRadius: '50%',
+                  backgroundColor: 'primary.light',
+                  color: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  mr: 2,
+                  fontWeight: 'bold',
+                  fontSize: '1rem'
+                }}
+              >
+                {classItem.teacher?.name ? classItem.teacher.name.split(' ').map(n => n[0]).join('') : ''}
+              </Box>
               <Box>
                 <Typography variant="subtitle1" sx={{ fontWeight: 'medium' }}>
                   {classItem.subject}: {classItem.topic}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import BookFreeTrial from '../components/BookFreeTrial';
 import { 
   Box, 
   Container, 
@@ -376,18 +377,7 @@ const Home = () => {
               Start your child's journey to academic excellence! Simply fill out the form below to book your free trial class.
             </Typography>
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-              <iframe 
-                src="https://docs.google.com/forms/d/e/1FAIpQLSd8b9hh4r1xZpohp_xOqFXgwNGMldLoXfHKqS76nQ2N8o6RTQ/viewform?embedded=true" 
-                width="100%" 
-                height="800" 
-                frameBorder="0" 
-                marginHeight="0" 
-                marginWidth="0"
-                title="Book Free Trial Class Form"
-                style={{ maxWidth: '600px', borderRadius: '8px' }}
-              >
-                Loading...
-              </iframe>
+              <BookFreeTrial />
             </Box>
           </Paper>
         </Container>
@@ -757,16 +747,16 @@ const Home = () => {
             <Grid item xs={12} md={4}>
               <TestimonialCard 
                 name="Ravi Kumar"
-                role="Class 8 Student"
-                image="https://randomuser.me/api/portraits/men/32.jpg"
-                testimonial="Padho Likho helped me improve my math grades from C to A+. My teacher explains concepts in a way that makes them easy to understand."
+                role="Parent"
+                image="https://randomuser.me/api/portraits/men/48.jpg"
+                testimonial="Padho Likho helped my son improve his math grades from C to A+. His teacher explains concepts in a way that makes them easy to understand."
               />
             </Grid>
             <Grid item xs={12} md={4}>
               <TestimonialCard 
-                name="Priya Sharma"
-                role="Class 10 Student"
-                image="https://randomuser.me/api/portraits/women/44.jpg"
+                name="Amara Kumari"
+                role="Class 8 Student"
+                image="https://randomuser.me/api/portraits/women/17.jpg"
                 testimonial="The interactive classes and practice tests on Padho Likho have been instrumental in my board exam preparation. Highly recommended!"
               />
             </Grid>
@@ -774,7 +764,7 @@ const Home = () => {
               <TestimonialCard 
                 name="Amit Patel"
                 role="Parent"
-                image="https://randomuser.me/api/portraits/men/62.jpg"
+                image="/i.jpg"
                 testimonial="As a parent, I love the detailed progress reports and the ability to communicate directly with teachers. My daughter's confidence has improved significantly."
               />
             </Grid>

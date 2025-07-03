@@ -5,27 +5,7 @@ const { authorize } = require('../middleware/auth.middleware');
 
 const router = express.Router();
 
-// Import controller (will implement later)
-const assessmentController = {
-  createAssessment: (req, res) => {
-    res.json({ message: 'Create assessment endpoint - to be implemented' });
-  },
-  getAssessments: (req, res) => {
-    res.json({ message: 'Get assessments endpoint - to be implemented' });
-  },
-  getAssessmentById: (req, res) => {
-    res.json({ message: 'Get assessment by ID endpoint - to be implemented' });
-  },
-  updateAssessment: (req, res) => {
-    res.json({ message: 'Update assessment endpoint - to be implemented' });
-  },
-  startAssessment: (req, res) => {
-    res.json({ message: 'Start assessment endpoint - to be implemented' });
-  },
-  submitAssessment: (req, res) => {
-    res.json({ message: 'Submit assessment endpoint - to be implemented' });
-  }
-};
+const assessmentController = require('../controllers/assessment.controller');
 
 // Create a new assessment
 router.post('/', auth, authorize('teacher'), assessmentController.createAssessment);

@@ -39,7 +39,7 @@ const teachersData = [
   {
     id: 1,
     name: 'Rajesh Kumar',
-    image: 'https://randomuser.me/api/portraits/men/32.jpg',
+    image: 'https://randomuser.me/api/portraits/men/48.jpg',
     subjects: ['Mathematics', 'Physics'],
     classes: [9, 10],
     experience: 8,
@@ -53,8 +53,8 @@ const teachersData = [
   },
   {
     id: 2,
-    name: 'Priya Sharma',
-    image: 'https://randomuser.me/api/portraits/women/44.jpg',
+    name: 'Amara Kumari',
+    image: 'https://randomuser.me/api/portraits/women/17.jpg',
     subjects: ['English', 'Hindi'],
     classes: [1, 2, 3, 4, 5],
     experience: 5,
@@ -69,7 +69,7 @@ const teachersData = [
   {
     id: 3,
     name: 'Amit Patel',
-    image: 'https://randomuser.me/api/portraits/men/62.jpg',
+    image: '/images/profile-image.jpg',
     subjects: ['Computer Science', 'Mathematics'],
     classes: [6, 7, 8, 9, 10],
     experience: 10,

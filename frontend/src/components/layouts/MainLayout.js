@@ -210,7 +210,12 @@ const MainLayout = () => {
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
               >
-                <MenuItem onClick={() => { handleProfileMenuClose(); handleNavigate('/profile'); }}>
+                <MenuItem onClick={() => { handleProfileMenuClose();
+  if (currentUser && currentUser.role === 'student') handleNavigate('/student/profile');
+  else if (currentUser && currentUser.role === 'teacher') handleNavigate('/teacher/profile');
+  else if (currentUser && currentUser.role === 'parent') handleNavigate('/parent/profile');
+  else handleNavigate('/profile');
+}}>
                   <ListItemIcon>
                     <PersonIcon fontSize="small" />
                   </ListItemIcon>

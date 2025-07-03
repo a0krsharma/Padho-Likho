@@ -483,7 +483,7 @@ const TeacherDashboard = () => {
             <Card elevation={2} sx={{ mb: 4, borderRadius: 3 }}>
               <CardContent sx={{ textAlign: 'center' }}>
                 <Avatar 
-                  src="https://randomuser.me/api/portraits/men/32.jpg"
+                  src="https://randomuser.me/api/portraits/men/48.jpg"
                   sx={{ 
                     width: 100, 
                     height: 100, 

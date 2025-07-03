@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Image Uploader</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .preview {
+      margin: 20px 0;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    .preview img {
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 2px solid #ddd;
+    }
+    .buttons {
+      margin: 20px 0;
+    }
+    button {
+      padding: 10px 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    input[type="file"] {
+      margin: 20px 0;
+    }
+    .status {
+      margin: 20px 0;
+      padding: 10px;
+      border-radius: 4px;
+    }
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Profile Image Uploader</h1>
+    <p>Use this tool to upload and set the profile image for Amit Patel across the platform.</p>
+    
+    <div class="preview">
+      <div>
+        <h3>Current Image</h3>
+        <img id="currentImage" src="/images/profile-image.jpg" alt="Current Profile Image">
+      </div>
+      <div id="newImageContainer" style="display: none;">
+        <h3>New Image</h3>
+        <img id="newImage" src="" alt="New Profile Image">
+      </div>
+    </div>
+    
+    <input type="file" id="imageInput" accept="image/*">
+    
+    <div class="buttons">
+      <button id="uploadButton">Upload Image</button>
+      <button id="applyButton" disabled>Apply Image</button>
+    </div>
+    
+    <div id="status" class="status" style="display: none;"></div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const imageInput = document.getElementById('imageInput');
+      const uploadButton = document.getElementById('uploadButton');
+      const applyButton = document.getElementById('applyButton');
+      const currentImage = document.getElementById('currentImage');
+      const newImage = document.getElementById('newImage');
+      const newImageContainer = document.getElementById('newImageContainer');
+      const status = document.getElementById('status');
+      
+      // Check if there's a previously uploaded image
+      const savedImage = localStorage.getItem('profileImage');
+      if (savedImage) {
+        newImage.src = savedImage;
+        newImageContainer.style.display = 'block';
+        applyButton.disabled = false;
+      }
+      
+      uploadButton.addEventListener('click', function() {
+        const file = imageInput.files[0];
+        if (!file) {
+          showStatus('Please select an image file first.', 'error');
+          return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const imageData = e.target.result;
+          
+          // Save to localStorage
+          localStorage.setItem('profileImage', imageData);
+          
+          // Update preview
+          newImage.src = imageData;
+          newImageContainer.style.display = 'block';
+          applyButton.disabled = false;
+          
+          showStatus('Image uploaded successfully!', 'success');
+        };
+        
+        reader.onerror = function() {
+          showStatus('Error reading the image file.', 'error');
+        };
+        
+        reader.readAsDataURL(file);
+      });
+      
+      applyButton.addEventListener('click', function() {
+        const imageData = localStorage.getItem('profileImage');
+        if (!imageData) {
+          showStatus('No image available to apply.', 'error');
+          return;
+        }
+        
+        // In a real application, this would update the server
+        // For this demo, we'll just update the current image preview
+        currentImage.src = imageData;
+        
+        // Create/update the actual file by downloading it
+        const link = document.createElement('a');
+        link.href = imageData;
+        link.download = 'profile-image.jpg';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        showStatus('Image applied successfully! Please save the downloaded image to the public/images folder.', 'success');
+      });
+      
+      function showStatus(message, type) {
+        status.textContent = message;
+        status.className = 'status ' + type;
+        status.style.display = 'block';
+        
+        // Hide after 5 seconds
+        setTimeout(function() {
+          status.style.display = 'none';
+        }, 5000);
+      }
+    });
+  </script>
+</body>
+</html>

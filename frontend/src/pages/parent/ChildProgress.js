@@ -53,7 +53,7 @@ const assessmentsData = [
     score: 68,
     totalMarks: 75,
     percentage: 90.67,
-    teacher: 'Priya Sharma'
+    teacher: 'Amara Kumari'
   },
   {
     id: 4,
@@ -175,7 +175,7 @@ const teacherFeedbackData = [
   },
   {
     id: 3,
-    teacher: 'Priya Sharma',
+    teacher: 'Amara Kumari',
     subject: 'English',
     date: '2025-03-18',
     feedback: 'Aryan has excellent comprehension skills and vocabulary. His writing has improved significantly. He should focus on grammar and punctuation.'

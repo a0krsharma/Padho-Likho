@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Box, 
   Container, 
@@ -34,27 +34,10 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
-// Sample data
-const upcomingClasses = [
-  {
-    id: 1,
-    subject: 'Mathematics',
-    topic: 'Quadratic Equations',
-    teacher: 'Rajesh Kumar',
-    teacherImage: 'https://randomuser.me/api/portraits/men/32.jpg',
-    date: 'Today',
-    time: '4:00 PM - 5:00 PM'
-  },
-  {
-    id: 2,
-    subject: 'Science',
-    topic: 'Chemical Reactions',
-    teacher: 'Neha Gupta',
-    teacherImage: 'https://randomuser.me/api/portraits/women/68.jpg',
-    date: 'Tomorrow',
-    time: '5:30 PM - 6:30 PM'
-  }
-];
+import axios from 'axios';
+
+// StudentDashboard will fetch dashboard data from the backend API
+
 
 const assignments = [
   {
@@ -113,6 +96,26 @@ const StudentDashboard = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const [showWelcomeDialog, setShowWelcomeDialog] = useState(true);
+  const [dashboardData, setDashboardData] = useState({ classes: [], assessments: [], bookings: [] });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        setLoading(true);
+        setError('');
+        const res = await axios.get('/api/dashboard/student');
+        setDashboardData(res.data || { classes: [], assessments: [], bookings: [] });
+      } catch (err) {
+        setError('Failed to load dashboard data.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDashboard();
+  }, []);
+
   
   // Get current date
   const currentDate = new Date().toLocaleDateString('en-US', {
@@ -122,6 +125,9 @@ const StudentDashboard = () => {
     day: 'numeric'
   });
   
+  if (loading) return <Box sx={{ p: 4, textAlign: 'center' }}>Loading...</Box>;
+  if (error) return <Box sx={{ p: 4, textAlign: 'center', color: 'red' }}>{error}</Box>;
+
   // Handle tab change
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -362,9 +368,9 @@ const StudentDashboard = () => {
                 </Box>
                 <Divider sx={{ mb: 2 }} />
                 
-                {upcomingClasses.length > 0 ? (
+                {dashboardData.classes.length > 0 ? (
                   <List>
-                    {upcomingClasses.map((classItem) => (
+                    {dashboardData.classes.map((classItem) => (
                       <Paper 
                         key={classItem.id} 
                         elevation={1} 
@@ -373,7 +379,23 @@ const StudentDashboard = () => {
                         <Grid container spacing={2} alignItems="center">
                           <Grid item xs={12} sm={7}>
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                              <Avatar src={classItem.teacherImage} sx={{ mr: 2 }} />
+                              <Box 
+                                sx={{ 
+                                  width: 40, 
+                                  height: 40, 
+                                  borderRadius: '50%',
+                                  backgroundColor: 'primary.light',
+                                  color: 'white',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  mr: 2,
+                                  fontWeight: 'bold',
+                                  fontSize: '1rem'
+                                }}
+                              >
+                                {classItem.teacher ? classItem.teacher.split(' ').map(n => n[0]).join('') : ''}
+                              </Box>
                               <Box>
                                 <Typography variant="subtitle1" sx={{ fontWeight: 'medium' }}>
                                   {classItem.subject}: {classItem.topic}

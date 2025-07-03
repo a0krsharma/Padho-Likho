@@ -183,15 +183,15 @@ const About = () => {
             <TeamMemberCard 
               name="Rajesh Kumar"
               role="Founder & CEO"
-              image="https://randomuser.me/api/portraits/men/32.jpg"
+              image="https://randomuser.me/api/portraits/men/48.jpg"
               bio="Former educator with 15 years of experience in the education sector. Passionate about making quality education accessible to all."
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <TeamMemberCard 
-              name="Priya Sharma"
+              name="Amara Kumari"
               role="Co-Founder & COO"
-              image="https://randomuser.me/api/portraits/women/44.jpg"
+              image="https://randomuser.me/api/portraits/women/17.jpg"
               bio="Education policy expert with a focus on technology integration in learning. Believes in the power of personalized education."
             />
           </Grid>
@@ -199,7 +199,7 @@ const About = () => {
             <TeamMemberCard 
               name="Amit Patel"
               role="CTO"
-              image="https://randomuser.me/api/portraits/men/62.jpg"
+              image="/images/profile-image.jpg"
               bio="Tech enthusiast with expertise in building scalable educational platforms. Committed to creating intuitive learning experiences."
             />
           </Grid>

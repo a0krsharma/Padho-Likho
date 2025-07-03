@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { submitTeacherVerification, updateTeacherProfile } from '../../utils/api';
 import { 
   Box, 
   Container, 
@@ -19,7 +21,6 @@ import {
   Card,
   CardContent,
   Alert,
-  IconButton,
   List,
   ListItem,
   ListItemIcon,
@@ -27,18 +28,16 @@ import {
   Chip
 } from '@mui/material';
 import { 
-  CloudUpload as CloudUploadIcon,
   Check as CheckIcon,
   School as SchoolIcon,
   VerifiedUser as VerifiedUserIcon,
   ArrowBack as ArrowBackIcon,
-  ArrowForward as ArrowForwardIcon,
-  
-  Delete as DeleteIcon
+  ArrowForward as ArrowForwardIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
 const TeacherVerification = () => {
+  const { currentUser } = useAuth();
   const navigate = useNavigate();
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState({
@@ -49,12 +48,13 @@ const TeacherVerification = () => {
     subjects: [],
     classes: [],
     idType: '',
-    idNumber: '',
-    uploadedFiles: []
+    idNumber: ''
   });
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState('');
 
-  const steps = ['Personal Information', 'Educational Qualifications', 'Teaching Experience', 'Document Upload', 'Review & Submit'];
+  const steps = ['Personal Information', 'Educational Qualifications', 'Teaching Experience', 'Review & Submit'];
 
   const handleNext = () => {
     if (validateStep(activeStep)) {
@@ -82,29 +82,7 @@ const TeacherVerification = () => {
     }
   };
 
-  const handleFileUpload = (e) => {
-    const files = Array.from(e.target.files);
-    const fileObjects = files.map(file => ({
-      name: file.name,
-      type: file.type,
-      size: file.size,
-      lastModified: file.lastModified
-    }));
-    
-    setFormData({
-      ...formData,
-      uploadedFiles: [...formData.uploadedFiles, ...fileObjects]
-    });
-  };
-
-  const handleRemoveFile = (index) => {
-    const updatedFiles = [...formData.uploadedFiles];
-    updatedFiles.splice(index, 1);
-    setFormData({
-      ...formData,
-      uploadedFiles: updatedFiles
-    });
-  };
+  
 
   const validateStep = (step) => {
     let isValid = true;
@@ -112,12 +90,12 @@ const TeacherVerification = () => {
 
     switch (step) {
       case 0: // Personal Information
-        if (!formData.idType) {
-          newErrors.idType = 'Please select an ID type';
+        if (!formData.idType || formData.idType !== 'aadhar') {
+          newErrors.idType = 'Aadhar Card is required';
           isValid = false;
         }
         if (!formData.idNumber) {
-          newErrors.idNumber = 'Please enter your ID number';
+          newErrors.idNumber = 'Please enter your Aadhar number';
           isValid = false;
         }
         break;
@@ -149,12 +127,7 @@ const TeacherVerification = () => {
           isValid = false;
         }
         break;
-      case 3: // Document Upload
-        if (formData.uploadedFiles.length === 0) {
-          newErrors.uploadedFiles = 'Please upload at least one document';
-          isValid = false;
-        }
-        break;
+      // No document upload step
       default:
         break;
     }
@@ -163,12 +136,34 @@ const TeacherVerification = () => {
     return isValid;
   };
 
-  const handleSubmit = () => {
-    // In a real application, this would submit the form data to the backend
-    console.log('Form submitted:', formData);
-    // Navigate to success page or show success message
-    setActiveStep(steps.length);
+  const handleSubmit = async () => {
+    setLoading(true);
+    setApiError('');
+    try {
+      if (!currentUser || !currentUser._id) {
+        setApiError('User not found. Please log in again.');
+        setLoading(false);
+        return;
+      }
+      // Submit verification data to backend
+      await submitTeacherVerification(currentUser.id, {
+        idType: formData.idType,
+        idNumber: formData.idNumber,
+        highestQualification: formData.highestQualification,
+        university: formData.university,
+        yearOfCompletion: formData.yearOfCompletion,
+        teachingExperience: formData.teachingExperience,
+        subjects: formData.subjects,
+        classes: formData.classes
+      }, currentUser.token);
+      setLoading(false);
+      navigate('/teacher/dashboard');
+    } catch (error) {
+      setLoading(false);
+      setApiError(error.response?.data?.message || 'Submission failed. Please try again.');
+    }
   };
+
 
   const getStepContent = (step) => {
     switch (step) {
@@ -189,10 +184,6 @@ const TeacherVerification = () => {
                     label="ID Type"
                   >
                     <MenuItem value="aadhar">Aadhar Card</MenuItem>
-                    <MenuItem value="pan">PAN Card</MenuItem>
-                    <MenuItem value="voter">Voter ID</MenuItem>
-                    <MenuItem value="passport">Passport</MenuItem>
-                    <MenuItem value="driving">Driving License</MenuItem>
                   </Select>
                   {errors.idType && <FormHelperText>{errors.idType}</FormHelperText>}
                 </FormControl>
@@ -349,61 +340,79 @@ const TeacherVerification = () => {
             </Grid>
           </Box>
         );
+      // No document upload step. Skip to review & submit.
       case 3:
         return (
           <Box>
             <Typography variant="h6" gutterBottom>
-              Document Upload
+              Review Your Information
             </Typography>
             <Alert severity="info" sx={{ mb: 3 }}>
-              Please upload clear scanned copies of your educational certificates, ID proof, and any teaching experience certificates.
+              Please review your information carefully before submitting. Once submitted, you cannot make changes until the verification process is complete.
             </Alert>
-            <Box sx={{ mb: 3 }}>
-              <Button
-                variant="outlined"
-                component="label"
-                startIcon={<CloudUploadIcon />}
-                sx={{ mb: 2 }}
-              >
-                Upload Documents
-                <input
-                  type="file"
-                  hidden
-                  multiple
-                  onChange={handleFileUpload}
-                />
-              </Button>
-              {errors.uploadedFiles && (
-                <FormHelperText error>{errors.uploadedFiles}</FormHelperText>
-              )}
-            </Box>
-            {formData.uploadedFiles.length > 0 && (
-              <Paper sx={{ p: 2, mb: 3 }}>
-                <Typography variant="subtitle1" gutterBottom>
-                  Uploaded Documents
-                </Typography>
-                <List>
-                  {formData.uploadedFiles.map((file, index) => (
-                    <ListItem
-                      key={index}
-                      secondaryAction={
-                        <IconButton edge="end" onClick={() => handleRemoveFile(index)}>
-                          <DeleteIcon />
-                        </IconButton>
-                      }
-                    >
-                      <ListItemIcon>
-                        <SchoolIcon />
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={file.name}
-                        secondary={`Size: ${(file.size / 1024).toFixed(2)} KB`}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-              </Paper>
-            )}
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
+                <Card sx={{ mb: 3 }}>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                      Personal Information
+                    </Typography>
+                    <List>
+                      <ListItem>
+                        <ListItemText primary="ID Type" secondary={formData.idType === 'aadhar' ? 'Aadhar Card' : ''} />
+                      </ListItem>
+                      <ListItem>
+                        <ListItemText primary="Aadhar Number" secondary={formData.idNumber} />
+                      </ListItem>
+                    </List>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                      Educational Qualifications
+                    </Typography>
+                    <List>
+                      <ListItem>
+                        <ListItemText primary="Highest Qualification" secondary={formData.highestQualification} />
+                      </ListItem>
+                      <ListItem>
+                        <ListItemText primary="University/Institution" secondary={formData.university} />
+                      </ListItem>
+                      <ListItem>
+                        <ListItemText primary="Year of Completion" secondary={formData.yearOfCompletion} />
+                      </ListItem>
+                    </List>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Card sx={{ mb: 3 }}>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                      Teaching Experience
+                    </Typography>
+                    <List>
+                      <ListItem>
+                        <ListItemText primary="Teaching Experience" secondary={formData.teachingExperience} />
+                      </ListItem>
+                      <ListItem>
+                        <ListItemText 
+                          primary="Subjects" 
+                          secondary={formData.subjects.join(', ')} 
+                        />
+                      </ListItem>
+                      <ListItem>
+                        <ListItemText 
+                          primary="Classes" 
+                          secondary={formData.classes.map(c => `Class ${c}`).join(', ')} 
+                        />
+                      </ListItem>
+                    </List>
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
           </Box>
         );
       case 4:
@@ -547,9 +556,12 @@ const TeacherVerification = () => {
           ) : (
             <>
               {getStepContent(activeStep)}
+              {apiError && (
+                <Alert severity="error" sx={{ mt: 2 }}>{apiError}</Alert>
+              )}
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
                 <Button
-                  disabled={activeStep === 0}
+                  disabled={activeStep === 0 || loading}
                   onClick={handleBack}
                   startIcon={<ArrowBackIcon />}
                 >
@@ -560,8 +572,9 @@ const TeacherVerification = () => {
                   color="primary"
                   onClick={activeStep === steps.length - 1 ? handleSubmit : handleNext}
                   endIcon={activeStep === steps.length - 1 ? <CheckIcon /> : <ArrowForwardIcon />}
+                  disabled={loading}
                 >
-                  {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
+                  {loading ? 'Submitting...' : (activeStep === steps.length - 1 ? 'Submit' : 'Next')}
                 </Button>
               </Box>
             </>

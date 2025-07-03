@@ -206,7 +206,7 @@ const StudentProfile = () => {
             <Grid item xs={12} md={4}>
               <Card elevation={2} sx={{ borderRadius: 3, mb: { xs: 4, md: 0 } }}>
                 <CardContent sx={{ textAlign: 'center', py: 4 }}>
-                  <Avatar 
+                  <Box 
                     sx={{ 
                       width: 120, 
                       height: 120, 
@@ -214,11 +214,18 @@ const StudentProfile = () => {
                       mb: 2,
                       border: '4px solid',
                       borderColor: 'primary.light',
-                      fontSize: 40
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: 'primary.light',
+                      color: 'white',
+                      fontSize: 40,
+                      fontWeight: 'bold'
                     }}
                   >
                     {profileData.firstName.charAt(0)}{profileData.lastName.charAt(0)}
-                  </Avatar>
+                  </Box>
                   <Typography variant="h5" gutterBottom>
                     {profileData.firstName} {profileData.lastName}
                   </Typography>

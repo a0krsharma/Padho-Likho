@@ -1,82 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTheme } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { Box, Container, Typography, Grid, Card, CardContent, Button, Divider, Tabs, Tab, Paper, Chip, LinearProgress, List, ListItem, ListItemText, ListItemIcon, CircularProgress } from '@mui/material';
 import { Assignment as AssignmentIcon, CheckCircle as CheckCircleIcon, Pending as PendingIcon, Timer as TimerIcon, CalendarToday as CalendarTodayIcon, ArrowForward as ArrowForwardIcon, School as SchoolIcon, Grade as GradeIcon, TrendingUp as TrendingUpIcon, BarChart as BarChartIcon } from '@mui/icons-material';
 
 
-// Sample assessments data
-const assessmentsData = [
-  {
-    id: 1,
-    title: 'Mathematics Mid-Term Test',
-    subject: 'Mathematics',
-    topic: 'Algebra and Geometry',
-    dueDate: '2025-04-15',
-    duration: 60, // in minutes
-    totalQuestions: 30,
-    totalMarks: 100,
-    status: 'pending',
-    teacher: 'Rajesh Kumar'
-  },
-  {
-    id: 2,
-    title: 'Science Quiz - Chemical Reactions',
-    subject: 'Science',
-    topic: 'Chemical Reactions',
-    dueDate: '2025-04-10',
-    duration: 30, // in minutes
-    totalQuestions: 20,
-    totalMarks: 50,
-    status: 'pending',
-    teacher: 'Neha Gupta'
-  },
-  {
-    id: 3,
-    title: 'English Grammar Test',
-    subject: 'English',
-    topic: 'Grammar and Punctuation',
-    dueDate: '2025-04-05',
-    duration: 45, // in minutes
-    totalQuestions: 25,
-    totalMarks: 75,
-    status: 'completed',
-    score: 68,
-    percentage: 90.67,
-    teacher: 'Priya Sharma',
-    completedOn: '2025-04-02'
-  },
-  {
-    id: 4,
-    title: 'Mathematics Quiz - Trigonometry',
-    subject: 'Mathematics',
-    topic: 'Trigonometry',
-    dueDate: '2025-03-25',
-    duration: 30, // in minutes
-    totalQuestions: 15,
-    totalMarks: 45,
-    status: 'completed',
-    score: 39,
-    percentage: 86.67,
-    teacher: 'Rajesh Kumar',
-    completedOn: '2025-03-22'
-  },
-  {
-    id: 5,
-    title: 'Computer Science Test - Programming Basics',
-    subject: 'Computer Science',
-    topic: 'Programming Fundamentals',
-    dueDate: '2025-03-20',
-    duration: 60, // in minutes
-    totalQuestions: 25,
-    totalMarks: 100,
-    status: 'completed',
-    score: 92,
-    percentage: 92,
-    teacher: 'Amit Patel',
-    completedOn: '2025-03-18'
-  }
-];
+import axios from 'axios';
+
+// Assessments will fetch data from the backend API
+
 
 const AssessmentCard = ({ assessment, onTakeAssessment, onViewDetails }) => {
   const theme = useTheme();
@@ -280,16 +212,69 @@ const AssessmentCard = ({ assessment, onTakeAssessment, onViewDetails }) => {
 const Assessments = () => {
   const navigate = useNavigate();
   const theme = useTheme();
-  
   const [tabValue, setTabValue] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSubject, setSelectedSubject] = useState('all');
   const [isLoading, setIsLoading] = useState(false);
-  
+  const [assessments, setAssessments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [currentAssessment, setCurrentAssessment] = useState(null);
-  
+
+  useEffect(() => {
+    const fetchAssessments = async () => {
+      try {
+        setLoading(true);
+        setError('');
+        const res = await axios.get('/api/assessments');
+        setAssessments(res.data.assessments || []);
+      } catch (err) {
+        setError('Failed to load assessments.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAssessments();
+  }, []);
+
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleSubjectChange = (event) => {
+    setSelectedSubject(event.target.value);
+  };
+
+  const handleTakeAssessment = (assessment) => {
+    setCurrentAssessment(assessment);
+    // Simulate loading
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      navigate(`/student/assessments/${assessment._id || assessment.id}/take`);
+    }, 1500);
+  };
+
+  const handleViewDetails = (assessment) => {
+    // Simulate loading
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      navigate(`/student/assessments/${assessment._id || assessment.id}`);
+    }, 1500);
+  };
+
+  if (loading) return <Box sx={{ p: 4, textAlign: 'center' }}>Loading...</Box>;
+  if (error) return <Box sx={{ p: 4, textAlign: 'center', color: 'red' }}>{error}</Box>;
+
+
   // Filter assessments based on tab, search term, and subject filter
-  const filteredAssessments = assessmentsData.filter(assessment => {
+  const filteredAssessments = assessments.filter(assessment => {
     // Tab filter
     const tabFilter = 
       tabValue === 0 ? true : // All assessments
@@ -308,45 +293,13 @@ const Assessments = () => {
     
     return tabFilter && searchFilter && subjectFilter;
   });
-  
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
-  
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
-  
-  const handleSubjectChange = (event) => {
-    setSelectedSubject(event.target.value);
-  };
-  
-  const handleTakeAssessment = (assessment) => {
-    setCurrentAssessment(assessment);
-    
-    // Simulate loading
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      navigate(`/student/assessments/${assessment.id}/take`);
-    }, 1500);
-  };
-  
-  const handleViewDetails = (assessment) => {
-    // Simulate loading
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      navigate(`/student/assessments/${assessment.id}`);
-    }, 800);
-  };
-  
+
   // Calculate statistics
-  const totalAssessments = assessmentsData.length;
-  const completedAssessments = assessmentsData.filter(a => a.status === 'completed').length;
-  const pendingAssessments = assessmentsData.filter(a => a.status === 'pending').length;
+  const totalAssessments = assessments.length;
+  const completedAssessments = assessments.filter(a => a.status === 'completed').length;
+  const pendingAssessments = assessments.filter(a => a.status === 'pending').length;
   
-  const averageScore = assessmentsData
+  const averageScore = assessments
     .filter(a => a.status === 'completed')
     .reduce((sum, a) => sum + a.percentage, 0) / completedAssessments || 0;
   
@@ -480,7 +433,7 @@ const Assessments = () => {
                 }}
               >
                 <Tab 
-                  label={`All Assessments (${assessmentsData.length})`} 
+                  label={`All Assessments (${assessments.length})`} 
                   icon={<AssignmentIcon />} 
                   iconPosition="start" 
                 />
@@ -628,7 +581,7 @@ const Assessments = () => {
                   <List>
                     {['Mathematics', 'Science', 'English', 'Computer Science'].map((subject, index) => {
                       // Calculate subject performance
-                      const subjectAssessments = assessmentsData.filter(
+                      const subjectAssessments = assessments.filter(
                         a => a.status === 'completed' && a.subject === subject
                       );
                       
@@ -674,7 +627,7 @@ const Assessments = () => {
                   </Typography>
                   
                   <List>
-                    {assessmentsData
+                    {assessments
                       .filter(a => a.status === 'completed')
                       .sort((a, b) => new Date(b.completedOn) - new Date(a.completedOn))
                       .slice(0, 5)

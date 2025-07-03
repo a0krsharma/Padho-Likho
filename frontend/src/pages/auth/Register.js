@@ -38,7 +38,7 @@ const Register = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'student',
+    role: 'student', // Default role is now fixed as student
     phone: '',
     address: '',
     city: '',
@@ -59,7 +59,7 @@ const Register = () => {
   const { register } = useAuth();
   const navigate = useNavigate();
 
-  const steps = ['Account Details', 'Personal Information', 'Role Specific Details'];
+  const steps = ['Account Details', 'Personal Information', 'Student Details'];
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -128,10 +128,7 @@ const Register = () => {
         isValid = false;
       }
       
-      if (!formData.role) {
-        newErrors.role = 'Please select a role';
-        isValid = false;
-      }
+      // Role validation removed as role is fixed to student
       
       // Make phone optional but validate format if provided
       if (formData.phone && !/^\d{10}$/.test(formData.phone.replace(/\D/g, ''))) {
@@ -402,23 +399,7 @@ const Register = () => {
                 ),
               }}
             />
-            <FormControl fullWidth margin="normal" required>
-              <InputLabel id="role-label">I am a</InputLabel>
-              <Select
-                labelId="role-label"
-                id="role"
-                name="role"
-                value={formData.role}
-                label="I am a"
-                onChange={handleChange}
-                error={!!errors.role}
-              >
-                <MenuItem value="student">Student</MenuItem>
-                <MenuItem value="parent">Parent</MenuItem>
-                <MenuItem value="teacher">Teacher</MenuItem>
-              </Select>
-              {errors.role && <FormHelperText error>{errors.role}</FormHelperText>}
-            </FormControl>
+            {/* Role selection removed - default role is student */}
             
             <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
               Address Information (Optional)

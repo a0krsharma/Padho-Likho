@@ -18,6 +18,7 @@ import Contact from './pages/Contact';
 import FindTeachers from './pages/FindTeachers';
 import TeacherProfile from './pages/TeacherProfile';
 import BookTeacher from './pages/BookTeacher';
+import ProfileImageUploader from './pages/ProfileImageUploader';
 
 // Teacher pages
 import TeacherDashboard from './pages/teacher/Dashboard';
@@ -25,10 +26,12 @@ import ManageClasses from './pages/teacher/ManageClasses';
 import ManageBookings from './pages/teacher/ManageBookings';
 import TeacherAssessments from './pages/teacher/Assessments';
 import CreateAssessment from './pages/teacher/CreateAssessment';
+import Verification from './pages/teacher/Verification';
 
 // Student pages
 import StudentDashboard from './pages/student/Dashboard';
 import StudentAssessments from './pages/student/Assessments';
+import StudentHelp from './pages/student/Help';
 
 // Profile page
 import Profile from './pages/profile/Profile';
@@ -64,22 +67,33 @@ const TakeAssessment = () => <PlaceholderComponent title="Take Assessment" />;
 
 
 // Protected route component
+import { useAuth } from './context/AuthContext';
+import jwt_decode from 'jwt-decode';
 const ProtectedRoute = ({ children, allowedRoles }) => {
-  // This is a simplified version - in a real app, we would check authentication status
+  const { currentUser } = useAuth();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Simulate checking auth status
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
+    let role = null;
+    let token = localStorage.getItem('token');
+    if (currentUser && currentUser.role) {
       setIsAuthenticated(true);
-      // In a real app, we would decode the token or fetch user data
-      setUserRole('student'); // Default for demo
+      role = currentUser.role;
+    } else if (token) {
+      setIsAuthenticated(true);
+      try {
+        const decoded = jwt_decode(token);
+        role = decoded.role || localStorage.getItem('role');
+      } catch (e) {
+        // fallback to localStorage role if decoding fails
+        role = localStorage.getItem('role');
+      }
     }
+    setUserRole(role);
     setLoading(false);
-  }, []);
+  }, [currentUser]);
 
   if (loading) {
     return (
@@ -93,12 +107,13 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     return <Navigate to="/login" />;
   }
 
-  if (allowedRoles && !allowedRoles.includes(userRole)) {
+  if (allowedRoles && (!userRole || !allowedRoles.includes(userRole))) {
     return <Navigate to="/" />;
   }
 
   return children;
 };
+
 
 function App() {
   return (
@@ -120,6 +135,7 @@ function App() {
           <Route path="/find-teachers" element={<FindTeachers />} />
           <Route path="/teachers/:id" element={<TeacherProfile />} />
           <Route path="/teachers/:id/book" element={<BookTeacher />} />
+          <Route path="/profile-image-uploader" element={<ProfileImageUploader />} />
 
           {/* Student routes */}
           <Route 
@@ -151,6 +167,14 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['student']}>
                 <StudentAssessments />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/student/help" 
+            element={
+              <ProtectedRoute allowedRoles={['student']}>
+                <StudentHelp />
               </ProtectedRoute>
             } 
           />
@@ -195,6 +219,14 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['teacher']}>
                 <TeacherDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/teacher/verification" 
+            element={
+              <ProtectedRoute allowedRoles={['teacher']}>
+                <Verification />
               </ProtectedRoute>
             } 
           />

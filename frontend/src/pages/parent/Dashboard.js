@@ -94,7 +94,7 @@ const upcomingClasses = [
     subject: 'Mathematics',
     topic: 'Quadratic Equations',
     teacher: 'Rajesh Kumar',
-    teacherImage: 'https://randomuser.me/api/portraits/men/32.jpg',
+    teacherImage: 'https://randomuser.me/api/portraits/men/48.jpg',
     date: 'Today',
     time: '4:00 PM - 5:00 PM'
   },
@@ -115,8 +115,8 @@ const upcomingClasses = [
     childName: 'Ananya Singh',
     subject: 'English',
     topic: 'Story Writing',
-    teacher: 'Priya Sharma',
-    teacherImage: 'https://randomuser.me/api/portraits/women/44.jpg',
+    teacher: 'Amara Kumari',
+    teacherImage: 'https://randomuser.me/api/portraits/women/17.jpg',
     date: 'Tomorrow',
     time: '3:00 PM - 4:00 PM'
   }

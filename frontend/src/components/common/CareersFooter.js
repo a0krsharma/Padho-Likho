@@ -86,17 +86,17 @@ const CareersFooter = () => {
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <PhoneIcon sx={{ mr: 1 }} />
                 <Typography variant="body1">
-                  Contact: 7070253050
+                  Contact: 8294331885
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <EmailIcon sx={{ mr: 1 }} />
                 <Link 
-                  href="mailto:a0krsharma@gmail.com" 
+                  href="mailto:padholikho.contact@gmail.com" 
                   color="inherit"
                   sx={{ textDecoration: 'none' }}
                 >
-                  a0krsharma@gmail.com
+                  padholikho.contact@gmail.com
                 </Link>
               </Box>
             </Box>
