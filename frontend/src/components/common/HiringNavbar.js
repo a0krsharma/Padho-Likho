@@ -60,7 +60,7 @@ const HiringNavbar = () => {
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <PhoneIcon sx={{ mr: 0.5 }} />
             <Typography variant="body1">
-              Contact: 7070253050
+              Contact: 8294331885
             </Typography>
           </Box>
           
