@@ -212,8 +212,8 @@ const Contact = () => {
                     Address
                   </Typography>
                   <Typography variant="body1">
-                    Vill - Gaudhapar, PS - Chandi,<br />
-                    PO - Barhauna, India
+                    Kankarbagh,<br />
+                    Patna, 800020
                   </Typography>
                 </Box>
               </Box>
