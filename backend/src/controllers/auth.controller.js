@@ -4,8 +4,10 @@ const { validationResult } = require('express-validator');
 
 // Register a new user
 exports.register = async (req, res) => {
+  console.log('Registration endpoint hit');
   try {
-    console.log('Registration request body:', JSON.stringify(req.body, null, 2));
+    console.log('Headers:', JSON.stringify(req.headers, null, 2));
+    console.log('Request body:', JSON.stringify(req.body, null, 2));
     
     // Check for validation errors
     const errors = validationResult(req);
@@ -17,6 +19,8 @@ exports.register = async (req, res) => {
         message: 'Validation failed'
       });
     }
+    
+    console.log('Passed validation');
 
     const { 
       email, 
@@ -46,6 +50,7 @@ exports.register = async (req, res) => {
     }
 
     // Create user based on role
+    console.log('Creating user data');
     const userData = {
       name: `${firstName} ${lastName}`.trim(),
       email,
@@ -201,21 +206,26 @@ exports.login = async (req, res) => {
     }
 
     // Generate JWT token
+    console.log('Generating JWT token');
     const token = jwt.sign(
       { userId: user._id, role: user.role },
       process.env.JWT_SECRET || 'padho_likho_jwt_secret_key',
       { expiresIn: '7d' }
     );
+    console.log('Token generated');
 
     // Return role-specific data
     const userData = user.getPublicProfile();
     
-    res.json({
+    const response = {
       success: true,
       message: 'Login successful',
       token,
       user: userData
-    });
+    };
+    
+    console.log('Sending response:', JSON.stringify(response, null, 2));
+    return res.json(response);
   } catch (error) {
     console.error('Login error:', error);
     let statusCode = 500;
@@ -227,10 +237,12 @@ exports.login = async (req, res) => {
       errorMessage = Object.values(error.errors).map(err => err.message).join(', ');
     }
     
-    res.status(statusCode).json({ 
+    const errorResponse = { 
       success: false,
       message: errorMessage 
-    });
+    };
+    console.error('Error response:', JSON.stringify(errorResponse, null, 2));
+    return res.status(statusCode).json(errorResponse);
   }
 };
 
@@ -245,13 +257,20 @@ exports.getCurrentUser = async (req, res) => {
       });
     }
     
-    res.json({ 
+    const response = { 
       success: true,
       user: user.getPublicProfile() 
-    });
+    };
+    console.log('Sending response:', JSON.stringify(response, null, 2));
+    return res.json(response);
   } catch (error) {
     console.error('Get current user error:', error);
-    res.status(500).json({ message: 'Server error while fetching user profile' });
+    const errorResponse = { 
+      success: false,
+      message: 'Server error while fetching user profile'
+    };
+    console.error('Error response:', JSON.stringify(errorResponse, null, 2));
+    return res.status(500).json(errorResponse);
   }
 };
 
@@ -279,13 +298,20 @@ exports.verifyEmail = async (req, res) => {
     user.emailVerificationExpires = undefined;
     await user.save();
     
-    res.json({ 
+    const response = { 
       success: true,
       message: 'Email verified successfully' 
-    });
+    };
+    console.log('Sending response:', JSON.stringify(response, null, 2));
+    return res.json(response);
   } catch (error) {
     console.error('Email verification error:', error);
-    res.status(500).json({ message: 'Invalid or expired verification token' });
+    const errorResponse = { 
+      success: false,
+      message: 'Invalid or expired verification token'
+    };
+    console.error('Error response:', JSON.stringify(errorResponse, null, 2));
+    return res.status(500).json(errorResponse);
   }
 };
 
@@ -309,14 +335,21 @@ exports.forgotPassword = async (req, res) => {
     
     // In a real app, send email with reset link
     // For now, just return the token
-    res.json({
+    const response = {
       success: true,
       message: 'Password reset link sent to your email',
       resetToken // This would normally be sent via email
-    });
+    };
+    console.log('Sending response:', JSON.stringify(response, null, 2));
+    return res.json(response);
   } catch (error) {
     console.error('Forgot password error:', error);
-    res.status(500).json({ message: 'Server error during password reset request' });
+    const errorResponse = { 
+      success: false,
+      message: 'Server error during password reset request'
+    };
+    console.error('Error response:', JSON.stringify(errorResponse, null, 2));
+    return res.status(500).json(errorResponse);
   }
 };
 
