@@ -80,6 +80,11 @@ app.use('/api/payments', paymentRoutes);
 // Import error handling middleware
 const errorHandler = require('./middleware/error.middleware');
 
+// Root route for testing
+app.get('/', (req, res) => {
+  res.json({ message: 'Welcome to Padho-Likho API', status: 'running' });
+});
+
 // Apply error handling middleware
 app.use(errorHandler);
 
