@@ -84,9 +84,36 @@ app.use('/api/payments', paymentRoutes);
 // Import error handling middleware
 const errorHandler = require('./middleware/error.middleware');
 
+// Test MongoDB connection
+app.get('/test-db', async (req, res) => {
+  try {
+    // Try to ping the database
+    await mongoose.connection.db.admin().ping();
+    res.json({ 
+      status: 'success',
+      message: 'MongoDB connection is working',
+      dbName: mongoose.connection.name,
+      dbHost: mongoose.connection.host,
+      dbPort: mongoose.connection.port
+    });
+  } catch (error) {
+    console.error('MongoDB connection test failed:', error);
+    res.status(500).json({ 
+      status: 'error',
+      message: 'MongoDB connection failed',
+      error: error.message 
+    });
+  }
+});
+
 // Root route for testing
 app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to Padho-Likho API', status: 'running' });
+  res.json({ 
+    message: 'Welcome to Padho-Likho API', 
+    status: 'running',
+    environment: process.env.NODE_ENV || 'development',
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Apply error handling middleware
