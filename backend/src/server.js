@@ -33,17 +33,19 @@ const io = socketIo(server, {
 const allowedOrigins = [
   'https://padho-likho.netlify.app',
   'https://padholikho.app',
+  'https://padho-likho-4ky2.onrender.com',
   'http://localhost:3000',
   'http://localhost:3001'
 ];
 
-app.use(cors({
+const corsOptions = {
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps or curl)
     if (!origin) return callback(null, true);
     if (allowedOrigins.indexOf(origin) !== -1) {
       return callback(null, true);
     } else {
+      console.log('CORS blocked for origin:', origin);
       return callback(new Error('Not allowed by CORS'));
     }
   },
@@ -52,9 +54,11 @@ app.use(cors({
   credentials: true,
   preflightContinue: false,
   optionsSuccessStatus: 204
-}));
+};
+
+app.use(cors(corsOptions));
 // Ensure preflight requests are handled
-app.options('*', cors());
+app.options('*', cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
