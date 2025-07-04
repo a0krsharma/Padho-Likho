@@ -93,14 +93,9 @@ io.on('connection', (socket) => {
   console.log('New client connected');
   
   // Join a room for specific class sessions
-  socket.on('join-room', (roomId, userId) => {
-    socket.join(roomId);
-    socket.to(roomId).emit('user-connected', userId);
-  });
-  
-  // Handle chat messages
-  socket.on('send-message', (message, roomId) => {
-    socket.to(roomId).emit('receive-message', message);
+  socket.on('join-class', (classId) => {
+    socket.join(classId);
+    console.log(`User joined class: ${classId}`);
   });
   
   // Handle whiteboard data
@@ -116,6 +111,16 @@ io.on('connection', (socket) => {
 
 // Start server
 const PORT = process.env.PORT || 10000;
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
+  console.log('Available routes:');
+  console.log(`- GET /`);
+  console.log(`- POST /api/auth/register`);
+  console.log(`- POST /api/auth/login`);
+  console.log(`- GET /api/users`);
+  console.log(`- GET /api/teachers`);
+  console.log(`- GET /api/bookings`);
+  console.log(`- GET /api/classes`);
+  console.log(`- GET /api/assessments`);
+  console.log(`- GET /api/payments`);
 });
