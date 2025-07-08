@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthContext';
 import { 
   Box, 
   Container, 
@@ -99,22 +101,25 @@ const StudentDashboard = () => {
   const [dashboardData, setDashboardData] = useState({ classes: [], assessments: [], bookings: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { api } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
         setLoading(true);
         setError('');
-        const res = await axios.get('/api/dashboard/student');
+        const res = await api.get('/api/dashboard/student');
         setDashboardData(res.data || { classes: [], assessments: [], bookings: [] });
       } catch (err) {
-        setError('Failed to load dashboard data.');
+        console.error('Dashboard fetch error:', err);
+        setError(err.response?.data?.message || 'Failed to load dashboard data.');
       } finally {
         setLoading(false);
       }
     };
+    
     fetchDashboard();
-  }, []);
+  }, [api]);
 
   
   // Get current date

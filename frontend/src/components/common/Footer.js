@@ -38,16 +38,16 @@ const Footer = () => {
                 Your gateway to quality education. Connect with qualified teachers for personalized learning experiences.
               </Typography>
               <Box>
-                <IconButton color="inherit" aria-label="Facebook" component="a" href="https://www.facebook.com/profile.php?id=100004294409731" target="_blank" rel="noopener noreferrer">
+                <IconButton color="inherit" aria-label="Facebook" component="a" href="https://www.facebook.com/profile.php?id=61578106288087" target="_blank" rel="noopener noreferrer">
                   <FacebookIcon />
                 </IconButton>
                 <IconButton color="inherit" aria-label="Twitter" component="a" href="https://x.com/a0krsharma" target="_blank" rel="noopener noreferrer">
                   <TwitterIcon />
                 </IconButton>
-                <IconButton color="inherit" aria-label="Instagram" component="a" href="https://www.instagram.com/a0krsharma/" target="_blank" rel="noopener noreferrer">
+                <IconButton color="inherit" aria-label="Instagram" component="a" href="https://www.instagram.com/padhoolikho/" target="_blank" rel="noopener noreferrer">
                   <InstagramIcon />
                 </IconButton>
-                <IconButton color="inherit" aria-label="YouTube" component="a" href="https://www.youtube.com/@abhishekkumar-ks7qh" target="_blank" rel="noopener noreferrer">
+                <IconButton color="inherit" aria-label="YouTube" component="a" href="https://www.youtube.com/channel/UCMkDdnT1C-lb36nGApnm8mg" target="_blank" rel="noopener noreferrer">
                   <YouTubeIcon />
                 </IconButton>
                 <IconButton color="inherit" aria-label="LinkedIn" component="a" href="https://www.linkedin.com/in/abhishek-kumar-740846a8/" target="_blank" rel="noopener noreferrer">

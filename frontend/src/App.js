@@ -68,33 +68,70 @@ const TakeAssessment = () => <PlaceholderComponent title="Take Assessment" />;
 
 
 
-// Protected route component
+// Protected route component with enhanced session handling
 const ProtectedRoute = ({ children, allowedRoles }) => {
-  const { currentUser } = useAuth();
+  const { currentUser, checkUser } = useAuth();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    let role = null;
-    let token = localStorage.getItem('token');
-    if (currentUser && currentUser.role) {
-      setIsAuthenticated(true);
-      role = currentUser.role;
-    } else if (token) {
-      setIsAuthenticated(true);
-      try {
-        const decoded = jwt_decode(token);
-        role = decoded.role || localStorage.getItem('role');
-      } catch (e) {
-        // fallback to localStorage role if decoding fails
-        role = localStorage.getItem('role');
+    const verifyToken = async () => {
+      const token = localStorage.getItem('token');
+      const storedRole = localStorage.getItem('role');
+      
+      // If we have a current user with role, use that
+      if (currentUser?.role) {
+        setIsAuthenticated(true);
+        setUserRole(currentUser.role);
+        setLoading(false);
+        return;
       }
-    }
-    setUserRole(role);
-    setLoading(false);
-  }, [currentUser]);
+      
+      // If we have a token but no current user, validate it
+      if (token) {
+        try {
+          // Try to decode the token first
+          const decoded = jwt_decode(token);
+          const tokenRole = decoded.role || storedRole;
+          
+          if (tokenRole) {
+            // If we have a role from the token, use it temporarily
+            setUserRole(tokenRole);
+            
+            // Then verify with the server
+            try {
+              await checkUser(token);
+              // If checkUser succeeds, the currentUser will be updated via AuthContext
+              setIsAuthenticated(true);
+            } catch (err) {
+              console.error('Token validation failed:', err);
+              localStorage.removeItem('token');
+              localStorage.removeItem('role');
+              setIsAuthenticated(false);
+              setUserRole(null);
+            }
+          }
+        } catch (e) {
+          console.error('Token decode error:', e);
+          localStorage.removeItem('token');
+          localStorage.removeItem('role');
+          setIsAuthenticated(false);
+          setUserRole(null);
+        }
+      } else {
+        setIsAuthenticated(false);
+        setUserRole(null);
+      }
+      
+      setLoading(false);
+    };
 
+    verifyToken();
+  }, [currentUser, checkUser]);
+
+  // Show loading state
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -103,12 +140,23 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     );
   }
 
+  // Redirect to login if not authenticated
   if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" state={{ from: window.location.pathname }} replace />;
   }
 
+  // Check if user has required role
   if (allowedRoles && (!userRole || !allowedRoles.includes(userRole))) {
-    return <Navigate to="/" />;
+    // Redirect to appropriate dashboard or home based on role
+    const redirectTo = userRole === 'teacher' ? '/teacher/dashboard' : 
+                      userRole === 'student' ? '/student/dashboard' : 
+                      userRole === 'parent' ? '/parent/dashboard' : '/';
+    return <Navigate to={redirectTo} replace />;
+  }
+
+  // If we have an error, show it but still render the children
+  if (error) {
+    console.error('ProtectedRoute error:', error);
   }
 
   return children;

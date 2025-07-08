@@ -2,12 +2,30 @@ import React from 'react';
 import axios from 'axios';
 
 // Configure axios base URL based on environment
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://padho-likho-4ky2.onrender.com/api';
-axios.defaults.baseURL = API_BASE_URL;
+const API_BASE_URL = (process.env.REACT_APP_API_URL || 'https://padho-likho-4ky2.onrender.com').replace(/\/$/, '');
 
-// Configure axios defaults
-axios.defaults.withCredentials = true;
-axios.defaults.headers.common['Content-Type'] = 'application/json';
+// Create axios instance with base URL
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
+// Add request interceptor to add auth token
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 // Create context first
 const AuthContext = React.createContext();
@@ -35,50 +53,85 @@ export function AuthProvider({ children }) {
   }
 
   // Logout function
-  function logout() {
-    clearAuth();
+  async function logout() {
+    try {
+      // Attempt to invalidate the session on the server
+      await api.post('/api/auth/logout');
+    } catch (err) {
+      console.error('Logout API error (proceeding with client-side cleanup):', err);
+      // Continue with client-side cleanup even if server logout fails
+    } finally {
+      // Clear auth state and token
+      clearAuth();
+    }
   }
 
   // Check user function
   const checkUser = React.useCallback(async (token) => {
     try {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      const response = await axios.get('/auth/me');
-      setCurrentUser(response.data.user);
-      setError(null);
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+      
+      // Fetch user data using the api instance
+      const response = await api.get('/api/auth/me');
+      
+      // If successful, update the user state
+      if (response.data && response.data.user) {
+        setCurrentUser(response.data.user);
+        setError(null);
+      } else {
+        throw new Error('Invalid user data received');
+      }
     } catch (err) {
       console.error('Error fetching user:', err);
       clearAuth();
-      setError('Session expired');
+      setError('Session expired. Please log in again.');
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // Initialize on mount
+  // Initialize on mount and on token change
   React.useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      checkUser(token);
-    } else {
-      setLoading(false);
-    }
+    checkUser(token);
   }, [checkUser]);
 
   // Login function
   async function login(email, password) {
     try {
       setLoading(true);
-      const response = await axios.post('/auth/login', { email, password });
+      setError('');
+      
+      // Make login request using the api instance
+      const response = await api.post('/api/auth/login', { 
+        email: email.trim().toLowerCase(),
+        password: password
+      });
+      
+      // Extract token and user data
       const { token, user } = response.data;
+      
+      if (!token || !user) {
+        throw new Error('Invalid response from server');
+      }
+      
+      // Store token and update auth header
       localStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      
+      // Update user state
       setCurrentUser(user);
       setError(null);
+      
       return true;
     } catch (err) {
       console.error('Login error:', err);
-      setError(err.response?.data?.message || 'Login failed');
+      clearAuth();
+      const errorMessage = err.response?.data?.message || 'Login failed. Please check your credentials.';
+      setError(errorMessage);
       return false;
     } finally {
       setLoading(false);
@@ -89,52 +142,77 @@ export function AuthProvider({ children }) {
   async function register(userData) {
     try {
       setLoading(true);
+      setError('');
+      
+      // Prepare registration data
       const registrationData = {
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        email: userData.email,
+        firstName: userData.firstName.trim(),
+        lastName: userData.lastName.trim(),
+        email: userData.email.trim().toLowerCase(),
         password: userData.password,
         role: userData.role,
-        phone: userData.phone,
-        address: userData.address || '',
-        city: userData.city || '',
-        state: userData.state || '',
-        zipCode: userData.zipCode || '',
-        country: userData.country || ''
+        phone: userData.phone?.trim() || '',
+        address: userData.address?.trim() || '',
+        city: userData.city?.trim() || '',
+        state: userData.state?.trim() || '',
+        zipCode: userData.zipCode?.trim() || '',
+        country: userData.country?.trim() || ''
       };
       
+      // Add role-specific fields
       if (userData.role === 'student') {
         registrationData.class = userData.class;
-        registrationData.subjects = userData.subjects;
+        registrationData.subjects = Array.isArray(userData.subjects) ? userData.subjects : [];
       } else if (userData.role === 'teacher') {
-        registrationData.subjects = userData.subjects;
-        registrationData.qualifications = userData.qualifications;
-        registrationData.experience = userData.experience;
+        registrationData.subjects = Array.isArray(userData.subjects) ? userData.subjects : [];
+        registrationData.qualifications = userData.qualifications?.trim() || '';
+        registrationData.experience = userData.experience || 0;
       }
       
-      console.log('Sending registration data:', JSON.stringify(registrationData, null, 2));
+      // Send registration request using the api instance
+      const response = await api.post('/api/auth/register', registrationData);
       
-      const response = await axios.post('/auth/register', registrationData);
-      console.log('Registration response:', response.data);
-      
+      // Handle successful registration
       const { token, user } = response.data;
+      
+      if (!token || !user) {
+        throw new Error('Invalid response from server');
+      }
+      
+      // Store token and update auth header
       localStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      
+      // Update user state
       setCurrentUser(user);
       setError(null);
+      
       return true;
+      
     } catch (err) {
       console.error('Registration error:', err);
-      console.error('Error response:', err.response?.data);
       
-      // Handle validation errors
-      if (err.response?.data?.errors) {
-        const validationErrors = err.response.data.errors.map(error => error.msg).join(', ');
-        setError(validationErrors || 'Validation failed. Please check your input.');
+      // Clear any partial auth state on error
+      clearAuth();
+      
+      // Handle different types of errors
+      if (err.response?.status === 400 && err.response.data?.errors) {
+        // Handle validation errors
+        const validationErrors = err.response.data.errors
+          .map(error => error.msg || error.message || 'Invalid field')
+          .join('\n');
+        setError(validationErrors || 'Please check your input and try again.');
+      } else if (err.response?.data?.message) {
+        // Handle server-side error messages
+        setError(err.response.data.message);
+      } else if (err.message === 'Network Error') {
+        setError('Unable to connect to the server. Please check your internet connection.');
       } else {
-        setError(err.response?.data?.message || 'Registration failed');
+        setError('Registration failed. Please try again later.');
       }
+      
       return false;
+      
     } finally {
       setLoading(false);
     }
@@ -147,7 +225,10 @@ export function AuthProvider({ children }) {
     error,
     login,
     register,
-    logout
+    logout,
+    clearAuth,
+    checkUser, // Expose checkUser for ProtectedRoute
+    api        // Expose the configured api instance
   };
 
   return (
